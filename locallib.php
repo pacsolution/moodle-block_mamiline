@@ -229,11 +229,11 @@ function mamiline_get_action($log, $userid){
             $message = '';
             break;
         case 'login' :
-            $title = $action . 'しました';
+            $title = $action;
             $message = \html_writer::empty_tag('img', array('src' => $basedir . '/images/login.png', 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . $action . 'しました';
             break;
         case 'logout' :
-            $title = $action . 'しました';
+            $title = $action;
             $message = \html_writer::empty_tag('img', array('src' => $basedir . '/images/logout.png', 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . $action . 'しました';
             break;
         case 'add' :
@@ -257,7 +257,7 @@ function mamiline_get_action($log, $userid){
             $message =  $user_url . 'が' . $log->module . 'を表示しました。';
             break;
         default :
-            $title = $module->name . 'を' . $action . 'しました';
+            $title = $module->name . 'を' . $action;
             $message = $module->name . '';
             break;
     }

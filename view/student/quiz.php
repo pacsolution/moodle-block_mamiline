@@ -44,6 +44,8 @@ echo html_writer::end_tag('head');
 
 echo html_writer::start_tag('body');
 
+echo html_writer::start_tag('div', array('class' => 'container-fluid'));
+
 //NavBar
 echo html_writer::start_tag('nav', array('class' => 'navbar navbar-default', 'role' => 'navigation'));
 echo html_writer::start_tag('div', array('class' => 'navbar-header'));
@@ -83,13 +85,11 @@ if($quizid == 0){
             JOIN {user} as u ON u.id = qa.userid
             JOIN {quiz} as q ON qa.quiz = q.id
             WHERE qa.userid = $USER->id && qa.preview = 0
-            GROUP BY q.id
-            ORDER BY qa.timefinish DESC";
+            GROUP BY q.id, qa.state
+            ORDER BY qa.timefinish ASC";
     $quiz_attempts = $DB->get_records_sql($sql);
 
-    echo html_writer::start_tag('div', array('class' => 'container'));
-    echo html_writer::start_tag('div', array('class' => 'col-md-10 well'));
-
+    echo html_writer::start_tag('div', array('class' => 'col-md-9 well'));
     echo html_writer::tag('h3', get_string('quiz_attmpt', 'block_mamiline'));
 
     echo html_writer::start_tag('table', array('class' => 'table table-striped table-hover'));
@@ -104,9 +104,9 @@ if($quizid == 0){
     echo html_writer::end_tag('thread');
     echo html_writer::end_tag('tr');
 
-    foreach($quiz_attempts as $quiz){
-        $cm = get_coursemodule_from_instance('quiz', $quiz->qid);
-        $grades = grade_get_grades($quiz->course, 'mod', 'quiz', $quiz->qid, $USER->id);
+    foreach($quiz_attempts as $attempt){
+        $cm = get_coursemodule_from_instance('quiz', $attempt->qid);
+        $grades = grade_get_grades($attempt->course, 'mod', 'quiz', $attempt->qid, $USER->id);
 
         foreach($grades as $grade){
             foreach($grade as $g){
@@ -114,14 +114,14 @@ if($quizid == 0){
                 }
             }
         }
-        if($quiz->timefinish == 0){
+        if($attempt->timefinish == 0){
             $timefinish = '-';
         }else{
-            $timefinish = userdate($quiz->timefinish);
+            $timefinish = userdate($attempt->timefinish);
         }
 
-        $course = \mamiline\get_course($quiz->course);
-        switch($quiz->state){
+        $course = \mamiline\get_course($attempt->course);
+        switch($attempt->state){
             case 'finished' :
                 $finished++;
                 $str_state = get_string('quiz_state_finished', 'block_mamiline');
@@ -141,13 +141,13 @@ if($quizid == 0){
         }
         echo html_writer::start_tag('tr');
         echo html_writer::tag('td', html_writer::link(new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $course->id)), s($course->fullname)));
-        echo html_writer::tag('td', html_writer::link(new moodle_url($CFG->wwwroot . '/mod/quiz/view.php', array('id' => $quiz->id)), s($quiz->name)));
-        echo html_writer::tag('td', userdate($quiz->timestart));
+        echo html_writer::tag('td', html_writer::link(new moodle_url($CFG->wwwroot . '/mod/quiz/view.php', array('id' => $attempt->id)), s($attempt->name)));
+        echo html_writer::tag('td', userdate($attempt->timestart));
         echo html_writer::tag('td', $timefinish);
         echo html_writer::tag('td', $str_state);
         echo html_writer::tag('td', round($gd->grade, 1) . "/" . round($g->grademax, 1));
         echo html_writer::tag('td', html_writer::link(new moodle_url($CFG->wwwroot . '/blocks/mamiline/view/student/quiz.php',
-                    array('quizid' => $quiz->qid)),
+                    array('quizid' => $attempt->qid)),
                 get_string('quiz_show_diff', 'block_mamiline'), array('class' => 'btn btn-success')
             )
         );
@@ -175,10 +175,7 @@ if($quizid == 0){
                 "pieRingWidth": 80,
                 "pieHoleRadius": 40,
                 "bg": "#fff",
-                "xColor": "rgba(150,150,150,0.6)",
-                "colorSet":
-                    ["rgba(0,150,250,0.5)","rgba(200,0,250,0.4)","rgba(250,250,0,0.3)"],
-                    "textColor": "#444",
+                "textColor": "#444",
                 },
             "data": [
                 ["小テスト数", ' . $sum . '],
@@ -231,6 +228,7 @@ if($quizid == 0){
     echo html_writer::empty_tag('canvas', array('id' => 'quiz_diff'));
     echo html_writer::end_tag('div');
 
+    //受験履歴
     echo html_writer::start_tag('div', array('class' => 'col-md-10'));
     echo html_writer::tag('h3', get_string('quiz_logs','block_mamiline'));
     echo html_writer::start_tag('table', array('class' => 'table table-striped'));
@@ -291,9 +289,9 @@ if($quizid == 0){
         echo html_writer::end_tag('tr');
     }
     echo html_writer::end_tag('table');
-    echo html_writer::end_tag('div');
+//    echo html_writer::end_tag('div');
 
-    //受験状況グラフ生成
+    //経過グラフ生成
     $jscode =  '
             var chartdata53 = {
                 "config": {
@@ -316,20 +314,19 @@ if($quizid == 0){
                 "data": [
                     ["受験回",';
 
-
     $i = 1;
     foreach($quiz_attempts as $quiz_attempt){
         if($i != 1)
             $jscode .= ',';
-        echo $i;
+        $jscode .= $i;
         $i++;
     }
-    echo "],['". get_string('quiz_grade', 'block_mamiline') ."',";
+    $jscode .= "],['". get_string('quiz_grade', 'block_mamiline') ."',";
     $i = 1;
     foreach($quiz_attempts as $quiz_attempt){
         if($i != 1)
-            echo ',';
-        echo round($quiz_attempt->sumgrades, 1);
+            $jscode .= ',';
+        $jscode .= round($quiz_attempt->sumgrades, 1);
         $i++;
     }
     $jscode .= ']]};';

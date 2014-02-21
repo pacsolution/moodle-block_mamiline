@@ -31,6 +31,8 @@ echo html_writer::end_tag('head');
 
 echo html_writer::start_tag('body');
 
+echo html_writer::start_tag('div', array('class' => 'container-fluid'));
+
 echo html_writer::start_tag('nav', array('class' => 'navbar navbar-default', 'role' => 'navigation'));
 echo html_writer::start_tag('div', array('class' => 'navbar-header'));
 echo html_writer::tag('a', get_string('pluginname', 'block_mamiline'), array('href' => new moodle_url('/blocks/mamiline/index.php'), 'class' => 'navbar-brand'));
@@ -59,7 +61,6 @@ echo html_writer::link('view/student/forum.php', get_string('forum', 'block_mami
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
-echo html_writer::start_tag('div', array('class' => 'container'));
 echo html_writer::start_tag('div', array('class' => 'row'));
 
 //enrol course list

@@ -35,6 +35,8 @@ echo html_writer::end_tag('head');
 
 echo html_writer::start_tag('body');
 
+echo html_writer::start_tag('div', array('class' => 'container-fluid'));
+
 echo html_writer::start_tag('nav', array('class' => 'navbar navbar-default', 'role' => 'navigation'));
 echo html_writer::start_tag('div', array('class' => 'navbar-header'));
 echo html_writer::tag('a', get_string('assign', 'block_mamiline'), array('href' => new moodle_url($basedir . '/index.php'), 'class' => 'navbar-brand'));
@@ -62,48 +64,42 @@ echo html_writer::link('forum.php', get_string('forum', 'block_mamiline'), array
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
-echo html_writer::start_tag('div', array('class' => 'container'));
 echo html_writer::start_tag('div', array('class' => 'row'));
 
 if($id){
-    $sql = "SELECT a.id, asub.userid, asub.timemodified, asub.status, a.name, a.course, a.grade, a.duedate, co.fullname, asf.numfiles, ast.onlinetext, f.commenttext FROM {assign_submission} as asub
-            JOIN {assign} as a ON asub.assignment = a.id
-            JOIN {course} as co ON a.course = co.id
-            LEFT OUTER JOIN {assignsubmission_file} as asf ON asf.assignment = a.id
-            LEFT OUTER JOIN {assignsubmission_onlinetext} as ast ON ast.assignment = a.id
-            LEFT OUTER JOIN {assignfeedback_comments} as f ON f.assignment = a.id
-            WHERE asub.userid = :userid AND asub.id = :id AND asub.status = 'submitted'";
+    $submission = assign::submission($id);
 
-    $assign_submission = $DB->get_record_sql($sql, array('userid' => $USER->id, 'id' => $id));
-    $cm = get_coursemodule_from_instance('assign', $assign_submission->id);
+    $cm = get_coursemodule_from_instance('assign', $submission->id);
     $course = \mamiline\get_course($cm->course);
     $context_module = context_module::instance($cm->id);
+
+    echo html_writer::start_tag('div', array('class' => ''));
 
     echo html_writer::start_tag('div', array('class' => 'col-md-9 well'));
     echo html_writer::tag('h3', get_string('assign_viewdetail', 'block_mamiline'));
     echo html_writer::start_tag('table' , array('class' => 'table table-striped'));
     echo html_writer::start_tag('tr');
     echo html_writer::tag('td', get_string('assign_name','block_mamiline'));
-    echo html_writer::tag('td', $assign_submission->name);
+    echo html_writer::tag('td', $submission->name);
     echo html_writer::end_tag('tr');
     echo html_writer::start_tag('tr');
     echo html_writer::tag('td', get_string('assign_timemodified','block_mamiline'));
-    echo html_writer::tag('td', userdate($assign_submission->timemodified));
+    echo html_writer::tag('td', userdate($submission->timemodified));
     echo html_writer::end_tag('tr');
     echo html_writer::start_tag('tr');
     echo html_writer::tag('td', get_string('assign_duedate','block_mamiline'));
-    echo html_writer::tag('td', userdate($assign_submission->duedate));
+    echo html_writer::tag('td', userdate($submission->duedate));
     echo html_writer::end_tag('tr');
     echo html_writer::start_tag('tr');
     echo html_writer::tag('td', get_string('assign_feedback','block_mamiline'));
-    echo html_writer::tag('td', $assign_submission->commenttext);
+    echo html_writer::tag('td', $submission->commenttext);
     echo html_writer::end_tag('tr');
     echo html_writer::end_tag('table');
     echo html_writer::end_tag('div');
 
     echo html_writer::start_tag('div', array('class' => 'col-md-9 well'));
     echo html_writer::tag('h3', get_string('assign_viewfile', 'block_mamiline'));
-    $files = assign::files($context_module->id);
+    $files = assign::files($context_module->id, $USER->id);
     foreach($files as $file){
         if($file->filesize != 0){
             echo html_writer::tag('h4', $file->filename);
@@ -133,21 +129,17 @@ if($id){
             echo html_writer::end_tag('table');
         }
     }
-    echo html_writer::end_tag('div');
 
-    echo html_writer::start_tag('div', array('class' => 'col-md-10 well'));
+    echo html_writer::end_tag('div');
+    echo html_writer::start_tag('div', array('class' => 'col-md-8 well'));
     echo html_writer::tag('h3', get_string('assign_viewonlinetext', 'block_mamiline'));
-    echo html_writer::tag('div', $assign_submission->onlinetext);
+    echo html_writer::tag('div', $submission->onlinetext);
     echo html_writer::end_tag('div');
 }else{
     echo html_writer::start_tag('div', array('class' => 'row'));
     echo html_writer::start_tag('div', array('class' => 'col-md-9 well'));
 
-    $sql = "SELECT asub.id, asub.userid, asub.timemodified, asub.status, a.name, a.course, a.grade, a.duedate, co.fullname FROM {assign_submission} as asub
-            JOIN {assign} as a ON asub.assignment = a.id
-            JOIN {course} as co ON a.course = co.id
-            WHERE asub.userid = :userid";
-    $assign_submission = $DB->get_records_sql($sql, array('userid' => $USER->id));
+    $submissions = assign::submissions();
 
     echo html_writer::start_tag('table' , array('class' => 'table table-striped'));
     echo html_writer::start_tag('thread');
@@ -158,7 +150,7 @@ if($id){
     echo html_writer::end_tag('tr');
     echo html_writer::end_tag('thread');
 
-    foreach($assign_submission as $assigns){
+    foreach($submissions as $assigns){
         echo html_writer::start_tag('tr');
         echo html_writer::tag('td', $assigns->name);
         echo html_writer::tag('td', html_writer::link(new moodle_url('/course/view.php', array('id' => $assigns->course)), $assigns->fullname));
@@ -166,6 +158,7 @@ if($id){
         echo html_writer::end_tag('tr');
     }
     echo html_writer::end_tag('table');
+    echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
 }

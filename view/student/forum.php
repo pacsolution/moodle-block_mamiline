@@ -1,7 +1,10 @@
 <?php
 
 require_once __DIR__ . '/../../../../config.php';
-require_once(dirname(__FILE__) . '/../../locallib.php');
+require_once __DIR__ . '/../../locallib.php';
+require_once __DIR__ . '/../../classes/common.php';
+
+use mamiline\common;
 
 /* @var $DB moodle_database */
 /* @var $CFG object */
@@ -13,6 +16,9 @@ $basedir = $CFG->wwwroot . '/blocks/mamiline';
 $userid = $USER->id;
 require_login();
 
+$context = context::instance_by_id(1);
+$PAGE->set_context($context);
+
 $forumid = optional_param('page', 1, PARAM_INT);
 
 echo html_writer::start_tag('html', array('lang' => 'ja'));
@@ -20,7 +26,7 @@ echo html_writer::start_tag('head');
 echo html_writer::empty_tag('meta', array('charset' => 'UTF-8'));
 echo html_writer::empty_tag('meta', array('http-equiv' => 'content-language', 'content' => 'ja'));
 echo html_writer::empty_tag('meta', array('name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0'));
-echo html_writer::tag('title', get_string('pluginname', 'block_mamiline'), array('name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0'));
+echo html_writer::tag('title', get_string('forum', 'block_mamiline'), array('name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0'));
 echo html_writer::script(null, $basedir . '/js/jquery.min.js');
 echo html_writer::script(null, $basedir . '/js/ccchart.js');
 echo html_writer::script(null, $basedir . '/js/messi.min.js');
@@ -30,6 +36,8 @@ echo html_writer::empty_tag('link', array('href' => $basedir . '/css/messi.min.c
 echo html_writer::end_tag('head');
 
 echo html_writer::start_tag('body');
+
+echo html_writer::start_tag('div', array('class' => 'container-fluid'));
 
 echo html_writer::start_tag('nav', array('class' => 'navbar navbar-default', 'role' => 'navigation'));
 echo html_writer::start_tag('div', array('class' => 'navbar-header'));
@@ -58,33 +66,133 @@ echo html_writer::link('forum.php', get_string('forum', 'block_mamiline'), array
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
-echo html_writer::start_tag('div', array('class' => 'container'));
 echo html_writer::start_tag('div', array('class' => 'row'));
-echo html_writer::start_tag('div', array('class' => 'col-md-12 well'));
-echo html_writer::tag('h3', get_string('timeline', 'block_mamiline'));
+echo html_writer::start_tag('div', array('class' => 'col-md-8 well'));
+echo html_writer::tag('h3', get_string('forum', 'block_mamiline'));
 
-$limit = array(PAGENUM * $page, PAGENUM * $page - PAGENUM);
-$sql = "SELECT l.id, l.course, l.module, l.action, l.url, c.fullname, l.cmid, l.time FROM {log} as l
-        JOIN {course} as c ON c.id = l.course
-        WHERE l.userid = :userid
-        ORDER BY l.time DESC";
-$logs = $DB->get_records_sql($sql, array('userid' => $USER->id), $limit[1], $limit[0]);
+global $DB, $USER, $CFG;
+$forum_graph_data = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-echo  '<div class="row">'
-    . '<div class="col-md-9 well">'
-    . '<legend>'.get_string('timeline', 'block_mamiline').'</legend>';
+$sql = "SELECT {forum_posts}.id, {forum}.name, {forum}.course, {forum_discussions}.name, {forum_posts}.created, {forum_posts}.subject, {forum_posts}.message, {forum}.name FROM {forum_posts}
+            JOIN {forum_discussions} ON {forum_posts}.discussion = {forum_discussions}.id
+            JOIN {forum} ON {forum_discussions}.forum = {forum}.id
+            WHERE {forum_posts}.userid = :userid
+            ";
+$forums = $DB->get_records_sql($sql, array('userid'=> $USER->id));
 
-foreach($logs as $log){
-    $year = userdate($log->time, '%Y/%m');
-    $day  = userdate($log->time, '%Y/%m');
+echo html_writer::empty_tag('canvas', array('id'=>'forum_chart'));
 
-    $action = mamiline_get_action($log);
-    echo  '<div class="col-md-12 well">'
-        . '<h3>' . $action['title'] . '</h3>'
-        . '<blockquote>' . $action['message'] . '</blockquote>'
-        . '</div>'
-    ;
+echo html_writer::start_tag('table', array('class' => 'table table-striped'));
+echo html_writer::start_tag('tr');
+echo html_writer::start_tag('thread');
+echo html_writer::tag('th', get_string('forum_course_name','block_mamiline'));
+echo html_writer::tag('th', get_string('forum_name','block_mamiline'));
+echo html_writer::tag('th', get_string('forum_subject','block_mamiline'));
+echo html_writer::tag('th', get_string('forum_timemodified','block_mamiline'));
+echo html_writer::end_tag('thread');
+echo html_writer::end_tag('tr');
+foreach($forums as $forum){
+    $course = common::course($forum->course);
+    $js_title = s($forum->subject);
+    $js_subject = $forum->message;
+
+    echo html_writer::start_tag('tr');
+    echo html_writer::tag('td', html_writer::link(new moodle_url('/mod/forum/view.php', array('id' => $course->id)), $course->fullname), array('class' => 'subscribelink'));
+    echo html_writer::tag('td', html_writer::link(new moodle_url('/mod/forum/view.php', array('id' => $forum->id)), $forum->name), array('class' => 'subscribelink'));
+    echo html_writer::tag('td', html_writer::link(new moodle_url('/mod/forum/view.php', array('id' => $course->id)), $course->fullname), array('class' => 'subscribelink'));
+    echo html_writer::tag('td', $forum->subject, array('class'=>'modal_forum', 'id'=>$forum->id));
+    echo html_writer::tag('td', userdate($forum->created));
+    echo html_writer::end_tag('tr');
+
+    $js = '$("#' . $forum->id . '").click(function(){
+            new Messi("
+                ' . $js_subject . '",
+                {title :' . $js_title . ',
+                 modal : true
+                });
+            });';
+
+    echo html_writer::script($js);
+
+    $utime = date('m', $forum->created);
+
+    switch ($utime){
+        case 1 :
+            $forum_graph_data[0]++;
+            break;
+        case 2 :
+            $forum_graph_data[1]++;
+            break;
+        case 3 :
+            $forum_graph_data[2]++;
+            break;
+        case 4 :
+            $forum_graph_data[3]++;
+            break;
+        case 5 :
+            $forum_graph_data[4]++;
+            break;
+        case 6 :
+            $forum_graph_data[5]++;
+            break;
+        case 7 :
+            $forum_graph_data[6]++;
+            break;
+        case 8 :
+            $forum_graph_data[7]++;
+            break;
+        case 9 :
+            $forum_graph_data[8]++;
+            break;
+        case 10 :
+            $forum_graph_data[9]++;
+            break;
+        case 11 :
+            $forum_graph_data[10]++;
+            break;
+        case 12 :
+            $forum_graph_data[11]++;
+            break;
+    }
 }
+
+echo html_writer::end_tag('table');
+
+$js = 'var chartdata53 = {
+                "config": {
+                    "title": "'. get_string('forum_graph_numofpost_title', 'block_mamiline') .'",
+                    "subTitle": "'. get_string('forum_graph_numofpost_subject', 'block_mamiline') .'",
+                    "type": "stackedarea",
+                    "bg": "#fff",
+                    "xColor": "rgba(150,150,150,0.6)",
+                    "colorSet":
+                        ["rgba(0,150,250,0.5)","rgba(200,0,250,0.4)","rgba(250,250,0,0.3)"],
+                    "textColor": "#444",
+                    "useMarker": "arc",
+                    "useVal": "yes"
+                },
+                "data": [
+                    ["'. get_string('forum_month', 'block_mamiline') . '",1,2,3,4,5,6,7,8,9,10,11,12],
+                    ["'. get_string('forum_graph_numofpost_title', 'block_mamiline') . '", ' .$forum_graph_data[0] . ',
+                               '.$forum_graph_data[1] . ','
+    .$forum_graph_data[2] . ','
+    .$forum_graph_data[3] . ','
+    .$forum_graph_data[4] . ','
+    .$forum_graph_data[5] . ','
+    .$forum_graph_data[6] . ','
+    .$forum_graph_data[7] . ','
+    .$forum_graph_data[8] . ','
+    .$forum_graph_data[9] . ','
+    .$forum_graph_data[10]. ','
+    .$forum_graph_data[11]. ']
+                ]
+            };
+        ccchart.init("forum_chart", chartdata53)
+';
+
+echo html_writer::script($js);
+
+
 
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');

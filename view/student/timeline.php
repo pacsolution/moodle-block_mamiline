@@ -2,9 +2,11 @@
 
 require_once __DIR__ . '/../../../../config.php';
 require_once(dirname(__FILE__) . '/../../locallib.php');
+require_once(dirname(__FILE__) . '/../../classes/common.php');
 require_once(dirname(__FILE__) . '/../../classes/timeline.php');
 require_once("$CFG->libdir/formslib.php");
 
+use mamiline\common;
 use mamiline\timeline;
 
 global $DB, $USER, $OUTPUT, $CFG, $PAGE;
@@ -29,13 +31,17 @@ echo html_writer::tag('title', get_string('pluginname', 'block_mamiline'), array
 echo html_writer::script(null, $basedir . '/js/jquery.min.js');
 echo html_writer::script(null, $basedir . '/js/ccchart.js');
 echo html_writer::script(null, $basedir . '/js/messi.min.js');
+echo html_writer::script(null, $basedir . '/js/prefixfree.min.js');
 echo html_writer::empty_tag('link', array('href' => $basedir . '/css/bootstrap.min.css', 'rel' => 'stylesheet'));
 echo html_writer::empty_tag('link', array('href' => $basedir . '/css/bootstrap-theme.min.css', 'rel' => 'stylesheet'));
 echo html_writer::empty_tag('link', array('href' => $basedir . '/css/messi.min.css', 'rel' => 'stylesheet'));
+echo html_writer::empty_tag('link', array('href' => $basedir . '/css/style.css', 'rel' => 'stylesheet'));
 
 echo html_writer::end_tag('head');
 
 echo html_writer::start_tag('body');
+
+echo html_writer::start_tag('div', array('class' => 'container-fluid'));
 
 echo html_writer::start_tag('nav', array('class' => 'navbar navbar-default', 'role' => 'navigation'));
 echo html_writer::start_tag('div', array('class' => 'navbar-header'));
@@ -55,6 +61,13 @@ echo html_writer::start_tag('div', array('id' => 'userinfo', 'class' => 'well', 
 echo html_writer::tag('div', $OUTPUT->user_picture($USER, array('size'=>140)), array('id' => 'userinfo', 'class' => '', 'align' => 'center'));
 echo fullname($USER);
 echo html_writer::end_tag('div');
+//コース切り替え
+$courses = timeline::courses($USER->id);
+echo html_writer::start_tag('div', array('class' => 'span2 well'));
+echo html_writer::tag('h4', get_string('timeline_choose_course', 'block_mamiline'));
+echo html_writer::select($courses, 'courseid', $courses[$courseid]);
+echo html_writer::end_tag('div');
+//メニュー
 echo html_writer::start_tag('div', array('class' => 'list-group'));
 echo html_writer::link('../../index.php', get_string('top', 'block_mamiline'), array('class' => 'list-group-item'));
 echo html_writer::link('timeline.php', get_string('timeline', 'block_mamiline'), array('class' => 'list-group-item'));
@@ -63,21 +76,11 @@ echo html_writer::link('assign.php', get_string('assign', 'block_mamiline'), arr
 echo html_writer::link('forum.php', get_string('forum', 'block_mamiline'), array('class' => 'list-group-item'));
 echo html_writer::end_tag('div');
 
-$courses = timeline::courses($USER->id);
-echo html_writer::start_tag('div', array('class' => 'span2 well'));
-echo html_writer::tag('h4', get_string('timeline_choose_course', 'block_mamiline'));
-//    echo html_writer::start_tag('form', array('name'=>'courseid', 'class'=>'navbar-form navbar-left'));
-echo html_writer::select($courses, 'courseid', $courses[$courseid], '');
-//  echo html_writer::end_tag('form');
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
-echo html_writer::start_tag('div', array('class' => 'container'));
-
-//「自分のみのタイムライン」か「コースメンバーのタイムラインにするかどうか」を選択させる画面
 if($mode == 0){
-    echo html_writer::start_tag('div', array('class' => 'span8 well'));
+    //「自分のみのタイムライン」か「コースメンバーのタイムラインにするかどうか」を選択させる画面
+    echo html_writer::start_tag('div', array('class' => 'col-md-8'));
     echo html_writer::tag('h3', get_string('timeline_choose_mode', 'block_mamiline'));
 
     echo html_writer::start_tag('table', array('class' => 'table table-striped table-hover'));
@@ -86,35 +89,54 @@ if($mode == 0){
     echo html_writer::tag('td', html_writer::tag('a', get_string('timeline_my', 'block_mamiline'),  array('href'=>new moodle_url('timeline.php', array('mode'=>1)), 'class' => 'btn btn-success')));
     echo html_writer::end_tag('tr');
     echo html_writer::start_tag('tr');
-    echo html_writer::tag('th', get_string('quiz_name','block_visualization'));
+    echo html_writer::tag('th', get_string('timeline_course_desc','block_mamiline'));
     echo html_writer::tag('td', html_writer::tag('a', get_string('timeline_course', 'block_mamiline'),  array('href'=>new moodle_url('timeline.php', array('mode'=>2)), 'class' => 'btn btn-success')));
     echo html_writer::end_tag('tr');
+    echo html_writer::end_tag('table');
     echo html_writer::end_tag('div');
+
 }elseif($mode == 1){
     //自分のみのタイムライン
+    echo html_writer::start_tag('div', array('class' => 'col-md-8'));
+    echo html_writer::tag('h3', get_string('timeline_my', 'block_mamiline'));
+
     $limit = array(PAGENUM * $page, PAGENUM * $page - PAGENUM);
     $sql = "SELECT l.id, l.course, l.module, l.action, l.url, c.fullname, l.cmid, l.time, l.userid FROM {log} as l
         JOIN {course} as c ON c.id = l.course
         WHERE l.userid = :userid
         ORDER BY l.time DESC";
     $logs = $DB->get_records_sql($sql, array('userid' => $USER->id), $limit[1], $limit[0]);
+    $work = 1;
+
+    echo html_writer::start_tag('ul', array('id'=>'timeline'));
+
     foreach($logs as $log){
-        $year = userdate($log->time, '%Y/%m');
-        $day  = userdate($log->time, '%Y/%m');
-        $action = \mamiline\mamiline_get_action($log, $log->userid);
-        echo html_writer::start_tag('div', array('class' => 'well'));
-        echo html_writer::tag('h3',$action['title']);
-        echo html_writer::tag('blockquote',$action['message']);
+        $action = timeline::action($log, $log->userid);
+
+        echo html_writer::start_tag('li', array('class' =>'work' . $work));
+        echo html_writer::empty_tag('input', array('class'=>'radio', 'id'=>'work' . $work, 'name'=>'works', 'type' =>'radio'));
+        echo html_writer::start_tag('div', array('class'=>'relative'));
+        echo html_writer::tag('label', $action['title'], array('for' => 'work' . $work));
+        echo html_writer::tag('span', userdate($log->time, '%Y/%m/%d'), array('class' => 'date'));
+        echo html_writer::empty_tag('span', array('class' => 'circle'));
         echo html_writer::end_tag('div');
+        echo html_writer::start_tag('div', array('class' => 'content'));
+        echo html_writer::tag('p', $action['message']);
+        echo html_writer::end_tag('div');
+
+        $work++;
     }
+
+    echo html_writer::end_tag('ul');
+    echo html_writer::end_tag('div');
 
 }elseif($mode == 2){
     //指定したコース内のタイムライン
-    $courses = timeline::courses($USER->id);
-    echo html_writer::start_tag('div', array('class' => 'row'));
     echo html_writer::start_tag('div', array('class' => 'col-md-8'));
 
     if($courseid != 0){
+        echo html_writer::tag('h3', common::course($courseid)->fullname);
+
         $limit = array(PAGENUM * $page, PAGENUM * $page - PAGENUM);
         $sql = "SELECT l.id, l.course, l.module, l.action, l.url, c.fullname, l.cmid, l.time, l.userid FROM {log} as l
         JOIN {course} as c ON c.id = l.course
@@ -122,34 +144,38 @@ if($mode == 0){
         ORDER BY l.time DESC";
         $logs = $DB->get_records_sql($sql, array('courseid' => $courseid), $limit[1], $limit[0]);
 
-        $date = array();
+        echo html_writer::start_tag('ul', array('id'=>'timeline'));
+
+        $work = 1;
         foreach($logs as $log){
-            $date[0] = userdate($log->time, '%Y%m%d');
+            $action = timeline::action($log, $log->userid);
 
-            if(isset($date[1]) == true && $date[0] != $date[1]){
-                echo html_writer::tag('h2', userdate($log->time, '%Y/%m/%d'));
-            }
-
-            $action = \mamiline\mamiline_get_action($log, $log->userid);
-            echo html_writer::start_tag('div', array('class' => 'well'));
-            echo html_writer::tag('h3',$action['title']);
-            echo html_writer::tag('blockquote',$action['message']);
+            echo html_writer::start_tag('li', array('class' =>'work' . $work));
+            echo html_writer::empty_tag('input', array('class'=>'radio', 'id'=>'work' . $work, 'name'=>'works', 'type' =>'radio'));
+            echo html_writer::start_tag('div', array('class'=>'relative'));
+            echo html_writer::tag('label', $action['title'], array('for' => 'work' . $work));
+            echo html_writer::tag('span', userdate($log->time, '%Y/%m/%d'), array('class' => 'date'));
+            echo html_writer::empty_tag('span', array('class' => 'circle'));
             echo html_writer::end_tag('div');
-            $date[1] = userdate($log->time, '%Y%m%d');
+            echo html_writer::start_tag('div', array('class' => 'content'));
+            echo html_writer::tag('p', $action['message']);
+            echo html_writer::end_tag('div');
+
+            $work++;
         }
     }
+    echo html_writer::end_tag('ul');
+    echo html_writer::end_tag('div');
 }
 
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
-$js = '$("*[name=courses]").change(function () {
-                if($(this).val()){
-                    var url = "timeline.php?mode=2&courseid=" + $(this).val();
-                    console.log(url);
-                    window.location = url;
-                    console.log(url);
-                }
-               }).change();';
+$js = '
+$("#menucourseid").change( function(){
+    var url = "timeline.php?mode=2&courseid=" + $(this).val();
+    console.log(url);
+    window.location = url;
+});
+';
+
 echo html_writer::script($js);
 echo html_writer::end_tag('body');
 echo html_writer::end_tag('html');
