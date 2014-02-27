@@ -21,12 +21,12 @@ echo html_writer::empty_tag('meta', array('charset' => 'UTF-8'));
 echo html_writer::empty_tag('meta', array('http-equiv' => 'content-language', 'content' => 'ja'));
 echo html_writer::empty_tag('meta', array('name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0'));
 echo html_writer::tag('title', get_string('pluginname', 'block_mamiline'), array('name' => 'viewport', 'content' => 'width=device-width, initial-scale=1.0'));
-echo html_writer::script(null, '/blocks/mamiline/js/jquery.min.js');
-echo html_writer::script(null, '/blocks/mamiline/js/ccchart.js');
-echo html_writer::script(null, '/blocks/mamiline/js/messi.min.js');
-echo html_writer::empty_tag('link', array('href' => '/blocks/mamiline/css/bootstrap.min.css', 'rel' => 'stylesheet'));
-echo html_writer::empty_tag('link', array('href' => '/blocks/mamiline/css/bootstrap-theme.min.css', 'rel' => 'stylesheet'));
-echo html_writer::empty_tag('link', array('href' => '/blocks/mamiline/css/messi.min.css', 'rel' => 'stylesheet'));
+echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/jquery.min.js'));
+echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/ccchart.js'));
+echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/messi.min.js'));
+echo html_writer::empty_tag('link', array('href' => new moodle_url('/blocks/mamiline/css/bootstrap.min.css'), 'rel' => 'stylesheet'));
+echo html_writer::empty_tag('link', array('href' => new moodle_url('/blocks/mamiline/css/bootstrap-theme.min.css'), 'rel' => 'stylesheet'));
+echo html_writer::empty_tag('link', array('href' => new moodle_url('/blocks/mamiline/css/messi.min.css'), 'rel' => 'stylesheet'));
 echo html_writer::end_tag('head');
 
 echo html_writer::start_tag('body');
