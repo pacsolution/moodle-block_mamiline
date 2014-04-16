@@ -2,7 +2,6 @@
 
 namespace mamiline;
 
-
 class timeline {
     public static function courses($userid)
     {
@@ -112,9 +111,9 @@ class timeline {
                 $message = $module->name . '';
                 break;
         }
-        $action = array('action' => get_string('timeline_' . $s_action, 'block_mamiline'), 'title'=>$title ,'message' => $message);
+        $result = array('action' => get_string('timeline_' . $s_action, 'block_mamiline'), 'title'=>$title ,'message' => $message);
 
-        return $action;
+        return $result;
     }
 
 } 

@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * visualization block caps.
+ * mamiline block caps.
  *
- * @package    block_visualization
+ * @package    block_mamiline
  * @copyright  VERSION2 Inc. <t-fuwa@ver2.jp>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,17 +46,17 @@ class block_mamiline extends block_base {
         $html = html_writer::tag('div',
             $OUTPUT->action_link(
                 new moodle_url('/blocks/mamiline/index.php', ['page' => 'top']),
-                $OUTPUT->pix_icon('i/settings', '') . get_string('showvisualization', 'block_mamiline')
+                $OUTPUT->pix_icon('i/settings', '') . get_string('showmamiline', 'block_mamiline')
             )
         );
         return $this->content = (object)[ 'text' => $html ];
     }
 
     public function applicable_formats() {
-        return array('all' => false,
+        return array('all' => true,
                      'site' => true,
                      'site-index' => true,
-                     'course-view' => false,
+                     'course-view' => true,
                      'course-view-social' => false,
                      'mod' => false,
                      'mod-quiz' => false);
@@ -66,7 +66,7 @@ class block_mamiline extends block_base {
         return true;
     }
 
-    function has_config() {return true;}
+    function has_config() {return false;}
 
     public function cron() {
         return true;

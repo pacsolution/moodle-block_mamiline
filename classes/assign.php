@@ -26,8 +26,8 @@ class assign {
 
     }
 
-    public static function submission($id){
-        global $DB, $USER;
+    public static function submission($id, $userid){
+        global $DB;
 
         $sql = "SELECT a.id, asub.userid, asub.timemodified, asub.status, a.name, a.course, a.grade, a.duedate, co.fullname, asf.numfiles, ast.onlinetext, f.commenttext FROM {assign_submission} as asub
             JOIN {assign} as a ON asub.assignment = a.id
@@ -37,19 +37,19 @@ class assign {
             LEFT OUTER JOIN {assignfeedback_comments} as f ON f.assignment = a.id
             WHERE asub.userid = :userid AND asub.id = :id AND asub.status = 'submitted'";
 
-        $submission = $DB->get_record_sql($sql, array('id' => $id, 'userid' => $USER->id));
+        $submission = $DB->get_record_sql($sql, array('id' => $id, 'userid' => $userid));
 
         return $submission;
     }
 
-    public static function submissions(){
-        global $DB, $USER;
+    public static function submissions($userid){
+        global $DB;
 
         $sql = "SELECT asub.id, asub.userid, asub.timemodified, asub.status, a.name, a.course, a.grade, a.duedate, co.fullname FROM {assign_submission} as asub
             JOIN {assign} as a ON asub.assignment = a.id
             JOIN {course} as co ON a.course = co.id
             WHERE asub.userid = :userid";
-        $submissions = $DB->get_records_sql($sql, array('userid' => $USER->id));
+        $submissions = $DB->get_records_sql($sql, array('userid' => $userid));
 
         return $submissions;
     }

@@ -35,128 +35,6 @@ function get_course($courseid, $clone = true) {
     }
 }
 
-function mamiline_print_forum_posts(){
-    global $DB, $USER, $CFG;
-    $forum_graph_data = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-    $sql = "SELECT {forum_posts}.id, {forum}.name, {forum}.course, {forum_discussions}.name, {forum_posts}.created, {forum_posts}.subject, {forum_posts}.message, {forum}.name FROM {forum_posts}
-            JOIN {forum_discussions} ON {forum_posts}.discussion = {forum_discussions}.id
-            JOIN {forum} ON {forum_discussions}.forum = {forum}.id
-            WHERE {forum_posts}.userid = $USER->id
-            ";
-    $forums = $DB->get_records_sql($sql);
-
-    echo '<h3>'.get_string('forum','block_mamiline').'</h3>';
-
-    echo '<canvas id="forum_chart"></canvas>';
-
-    echo '<table class="table table-striped">';
-    echo '<tr><thread>';
-    echo '<th>'.get_string('forum_course_name','block_mamiline').'</th>';
-    echo '<th>'.get_string('forum_name','block_mamiline').'</th>';
-    echo '<th>'.get_string('forum_subject','block_mamiline').'</th>';
-    echo '<th>'.get_string('forum_timemodified','block_mamiline').'</th>';
-    echo '</thread></tr>';
-
-    foreach($forums as $forum){
-        $course = get_course($forum->course);
-        $js_title = s($forum->subject);
-        $js_subject = $forum->message;
-
-        echo "<tr>";
-        echo "<td><a href='$CFG->wwwroot/mod/forum/view.php?id=$course->id'>$course->fullname</a></td>";
-        echo "<td><a href='$CFG->wwwroot/mod/forum/view.php?id=$forum->id'>$forum->name</a></td>";
-        echo "<td class='modal_forum' id='$forum->id'><a>" . $forum->subject."</a></td>";
-        echo "<td>" . userdate($forum->created)."</td>";
-        echo "</tr>";
-
-        echo '
-            <script>
-                $("#' . $forum->id . '").click(function(){
-                    new Messi("
-                        ' . $js_subject . '",
-                            {title :' . $js_title . ',
-                            　modal : true
-                            });
-                    });
-            </script>';
-
-        $utime = date('m', $forum->created);
-
-        switch ($utime){
-            case 1 :
-                $forum_graph_data[0]++;
-                break;
-            case 2 :
-                $forum_graph_data[1]++;
-                break;
-            case 3 :
-                $forum_graph_data[2]++;
-                break;
-            case 4 :
-                $forum_graph_data[3]++;
-                break;
-            case 5 :
-                $forum_graph_data[4]++;
-                break;
-            case 6 :
-                $forum_graph_data[5]++;
-                break;
-            case 7 :
-                $forum_graph_data[6]++;
-                break;
-            case 8 :
-                $forum_graph_data[7]++;
-                break;
-            case 9 :
-                $forum_graph_data[8]++;
-                break;
-            case 10 :
-                $forum_graph_data[9]++;
-                break;
-            case 11 :
-                $forum_graph_data[10]++;
-                break;
-            case 12 :
-                $forum_graph_data[11]++;
-                break;
-        }
-    }
-    echo '</table>';
-    echo '<script>
-            var chartdata53 = {
-                "config": {
-                    "title": "'. get_string('forum_graph_numofpost_title', 'block_mamiline') .'",
-                    "subTitle": "'. get_string('forum_graph_numofpost_subject', 'block_mamiline') .'",
-                    "type": "stackedarea",
-                    "bg": "#fff",
-                    "xColor": "rgba(150,150,150,0.6)",
-                    "colorSet":
-                        ["rgba(0,150,250,0.5)","rgba(200,0,250,0.4)","rgba(250,250,0,0.3)"],
-                    "textColor": "#444",
-                    "useMarker": "arc",
-                    "useVal": "yes"
-                },
-                "data": [
-                    ["'. get_string('forum_month', 'block_mamiline') . '",1,2,3,4,5,6,7,8,9,10,11,12],
-                    ["'. get_string('forum_graph_numofpost_title', 'block_mamiline') . '", ' .$forum_graph_data[0] . ',
-                               '.$forum_graph_data[1] . ','
-                                .$forum_graph_data[2] . ','
-                                .$forum_graph_data[3] . ','
-                                .$forum_graph_data[4] . ','
-                                .$forum_graph_data[5] . ','
-                                .$forum_graph_data[6] . ','
-                                .$forum_graph_data[7] . ','
-                                .$forum_graph_data[8] . ','
-                                .$forum_graph_data[9] . ','
-                                .$forum_graph_data[10]. ','
-                                .$forum_graph_data[11]. ']
-                ]
-            };
-        ccchart.init("forum_chart", chartdata53)
-</script>';
-}
-
 function mamiline_common_calcgrade($quiz){
     if($quiz->qa_sumgrades == 0 || $quiz->q_sumgrades == 0){
         return 0;
@@ -229,11 +107,11 @@ function mamiline_get_action($log, $userid){
             $message = '';
             break;
         case 'login' :
-            $title = $action;
+            $title = $action . 'しました';
             $message = \html_writer::empty_tag('img', array('src' => $basedir . '/images/login.png', 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . $action . 'しました';
             break;
         case 'logout' :
-            $title = $action;
+            $title = $action . 'しました';
             $message = \html_writer::empty_tag('img', array('src' => $basedir . '/images/logout.png', 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . $action . 'しました';
             break;
         case 'add' :
@@ -257,7 +135,7 @@ function mamiline_get_action($log, $userid){
             $message =  $user_url . 'が' . $log->module . 'を表示しました。';
             break;
         default :
-            $title = $module->name . 'を' . $action;
+            $title = $module->name . 'を' . $action . 'しました';
             $message = $module->name . '';
             break;
     }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Newblock block caps.
+ * mamiline block caps.
  *
  * @package   block_mamiline
  * @copyright VERSION2 Inc. <t-fuwa@ver2.jp>
@@ -33,6 +33,7 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
+
         )
     ),
     'block/mamiline:addinstance' => array(
@@ -44,6 +45,16 @@ $capabilities = array(
             'manager'        => CAP_ALLOW,
         ),
         'clonepermissionsfrom' => 'moodle/grade:edit',
+    ),
+    'block/mamiline:viewteacher' => array(
+        'riskbitmask'  => RISK_SPAM | RISK_XSS,
+        'captype'      => 'read',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes'   => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
+            'teacher'        => CAP_ALLOW,
+        )
     ),
     'block/mamiline:config' => array(
         'riskbitmask' => RISK_SPAM,

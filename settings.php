@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Newblock block caps.
+ * mamiline block caps.
  *
  * @package    block_mamiline
  * @copyright  VERSION2 Inc. <t-fuwa@ver2.jp>
