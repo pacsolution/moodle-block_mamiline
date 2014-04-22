@@ -18,11 +18,13 @@ require_login();
 /* @var $PAGE object */
 global $DB, $USER, $OUTPUT, $CFG, $PAGE;
 
-$context = context::instance_by_id(1);
-$PAGE->set_context($context);
-
 $forumid = required_param('forumid', PARAM_INT);
 $discussionid = required_param('discussionid', PARAM_INT);
+
+$forum = mamiline\forum::forum($forumid);
+$cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course);
+$context = context_module::instance($cm->id);
+$PAGE->set_context($context);
 
 echo html_writer::start_tag('html', array('lang' => 'ja'));
 echo html_writer::start_tag('head');

@@ -13,9 +13,16 @@ require_login();
 use mamiline\quiz;
 use mamiline\grade;
 
-$basedir = $CFG->wwwroot . '/blocks/mamiline';
 $quizid = optional_param('quizid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
+
+$quiz = quiz::quiz($quizid);
+$cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+$context = context_module::instance($cm->id);
+$PAGE->set_context($context);
+
+$grade = mamiline\quiz::grades($quiz, $USER->id);
+$grades = grade::usergrade($quiz, $USER->id);
 
 /* @var $DB moodle_database */
 /* @var $USER object */
@@ -23,9 +30,6 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 /* @var $CFG object */
 /* @var $PAGE object */
 global $DB, $USER, $OUTPUT, $CFG, $PAGE;
-
-$context = context::instance_by_id(1);
-$PAGE->set_context($context);
 
 echo html_writer::start_tag('html', array('lang' => 'ja'));
 echo html_writer::start_tag('head');
@@ -95,14 +99,6 @@ echo html_writer::end_tag('nav');
 echo html_writer::start_tag('div', array('id' => 'page-wrapper'));
 echo html_writer::start_tag('div', array('class' => 'row'));
 
-$quiz = quiz::quiz($quizid);
-$grade = mamiline\quiz::grades($quiz, $USER->id);
-$grades = grade::usergrade($quiz, $USER->id);
-
-$cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
-$context = context_module::instance($cm->id);
-$PAGE->set_context($context);
-
 $feedback = quiz_feedback_for_grade($grades->rawgrade, $quiz, $context);
 
 echo html_writer::start_tag('div', array('class' => 'row'));
@@ -169,28 +165,28 @@ foreach($quiz_attempts as $quiz_attempt){
             $finished++;
             $str_state = get_string('quiz_state_finished',   'block_mamiline');
             $image_badge  = html_writer::start_tag('div');
-            $image_badge .= html_writer::empty_tag('img', array('src' => $basedir . '/images/verygood.gif', 'class' => 'img-rounded', 'width' => '100', 'height' => '100'));
+            $image_badge .= html_writer::empty_tag('img', array('src' => new moodle_url('/blocks/mamiline//images/verygood.gif'), 'class' => 'img-rounded', 'width' => '100', 'height' => '100'));
             $image_badge .= html_writer::end_tag('div');
             break;
         case 'inprogress' :
             $inprogress++;
             $str_state = get_string('quiz_state_inprogress', 'block_mamiline');
             $image_badge  = html_writer::start_tag('div');
-            $image_badge .= html_writer::empty_tag('img', array('src' => $basedir . '/images/notgood.gif', 'class' => 'img-rounded', 'width' => '100', 'height' => '100'));
+            $image_badge .= html_writer::empty_tag('img', array('src' => new moodle_url('/images/notgood.gif'), 'class' => 'img-rounded', 'width' => '100', 'height' => '100'));
             $image_badge .= html_writer::end_tag('div');
             break;
         case 'overdue' :
             $overdue++;
             $str_state = get_string('quiz_state_overdue',    'block_mamiline');
             $image_badge  = html_writer::start_tag('div');
-            $image_badge .= html_writer::empty_tag('img', array('src' => $basedir . '/images/notgood.gif', 'class' => 'img-rounded', 'width' => '100', 'height' => '100'));
+            $image_badge .= html_writer::empty_tag('img', array('src' => new moodle_url('/images/notgood.gif'), 'class' => 'img-rounded', 'width' => '100', 'height' => '100'));
             $image_badge .= html_writer::end_tag('div');
             break;
         case 'abandoned' :
             $abandoned++;
             $str_state = get_string('quiz_state_abandoned',  'block_mamiline');
             $image_badge  = html_writer::start_tag('div');
-            $image_badge .= html_writer::empty_tag('img', array('src' => $basedir . '/images/notgood.gif', 'class' => 'img-rounded', 'width' => '100', 'height' => '100'));
+            $image_badge .= html_writer::empty_tag('img', array('src' =>  new moodle_url('/images/notgood.gif'), 'class' => 'img-rounded', 'width' => '100', 'height' => '100'));
             $image_badge .= html_writer::end_tag('div');
             break;
     }

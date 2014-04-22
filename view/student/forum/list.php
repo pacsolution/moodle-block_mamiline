@@ -18,10 +18,10 @@ require_login();
 /* @var $PAGE object */
 global $DB, $USER, $OUTPUT, $CFG, $PAGE;
 
-$context = context::instance_by_id(1);
-$PAGE->set_context($context);
-
 $courseid = required_param('courseid', PARAM_INT);
+
+$context = context_course::instance($courseid);
+$PAGE->set_context($context);
 
 echo html_writer::start_tag('html', array('lang' => 'ja'));
 echo html_writer::start_tag('head');
@@ -95,10 +95,8 @@ echo html_writer::start_tag('div', array('class' => 'row'));
 $posts = mamiline\forum::posts($USER->id, $courseid);
 $course = mamiline\common::course($courseid);
 echo html_writer::start_tag('div', array('class' => 'col-lg-12'));
+echo html_writer::tag('h3', get_string('forum_list', 'block_mamiline') . '(' . $course->fullname . ')');
 echo html_writer::start_tag('div', array('class' => 'panel panel-default'));
-echo html_writer::start_tag('div', array('class' => 'panel-heading'));
-echo html_writer::tag('h4', get_string('forum_list', 'block_mamiline') . '(' . $course->fullname . ')');
-echo html_writer::end_tag('div');
 echo html_writer::start_tag('table', array('class' => 'table table-striped'));
 echo html_writer::start_tag('tr');
 echo html_writer::start_tag('thread');
@@ -129,40 +127,12 @@ echo html_writer::end_tag('table');
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
 
-/*
-$status = \mamiline\common::login_status($USER->id);
-$js_graph_attempt = "
-Morris.Bar({
-  element: 'graph_forum',
-  data: [
-    { y: '1', a: $forum_graph_data[0]},
-    { y: '2', a: $forum_graph_data[1]},
-    { y: '3', a: $forum_graph_data[2]},
-    { y: '4', a: $forum_graph_data[3]},
-    { y: '5', a: $forum_graph_data[4]},
-    { y: '6', a: $forum_graph_data[5]},
-    { y: '7', a: $forum_graph_data[6]},
-    { y: '8', a: $forum_graph_data[7]},
-    { y: '9', a: $forum_graph_data[8]},
-    { y: '10', a: $forum_graph_data[9]},
-    { y: '11', a: $forum_graph_data[10]},
-    { y: '12', a: $forum_graph_data[11]}
-  ],
-  xkey: 'y',
-  ykeys: ['a', 'b'],
-  labels: ['投稿数']
-});
-";
-echo html_writer::script($js_graph_attempt);
-*/
 
 //Script
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/jquery.min.js'));
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/raphael-min.js'));
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/morris-0.4.3.min.js'));
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/ccchart.js'));
-
-echo html_writer::script($js_graph_attempt);
 
 echo html_writer::end_tag('body');
 echo html_writer::end_tag('html');

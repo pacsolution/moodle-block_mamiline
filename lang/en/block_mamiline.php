@@ -45,7 +45,8 @@ $string['view_all_courses'] = '全コース一覧を表示';
 $string['login_graph'] = 'ログイングラフ(過去7日分)';
 
 $string['finished'] = '完了';
-$string['abandoned'] = '未受験';
+$string['abandoned'] = '中断';
+$string['unfinished'] = '未受験';
 $string['inprogress'] = '受験中';
 $string['overdue'] = '締切超過';
 $string['gradepass'] = '合格点';
@@ -113,7 +114,7 @@ $string['timeoverdues'] = '提出遅れの数';
 
 $string['forum'] = 'フォーラム';
 $string['forum_posted_course'] = '今まで投稿したフォーラム';
-$string['forum_list'] = '投稿したフォーラム一覧';
+$string['forum_list'] = 'コース上で投稿したフォーラム一覧';
 $string['forum_name'] = 'フォーラム';
 $string['forum_view_detail'] = 'フォーラム内の投稿を表示';
 $string['forum_course_name'] = 'コース/フォーラム';

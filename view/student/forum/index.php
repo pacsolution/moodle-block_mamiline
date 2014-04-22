@@ -91,10 +91,8 @@ echo html_writer::start_tag('div', array('class' => 'row'));
 
 //「投稿したフォーラム一覧」
 echo html_writer::start_tag('div', array('class' => 'col-lg-12'));
-echo html_writer::start_tag('div', array('class' => 'panel panel-default'));
 echo html_writer::start_tag('div', array('class' => 'panel-heading'));
 echo html_writer::tag('h3', get_string('forum_posted_course', 'block_mamiline'));
-echo html_writer::end_tag('div');
 echo html_writer::start_tag('table', array('class' => 'table table-striped'));
 echo html_writer::start_tag('tr');
 echo html_writer::start_tag('thread');
@@ -114,7 +112,6 @@ foreach ($courses as $course) {
 echo html_writer::end_tag('table');
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
-
 
 /*
 echo html_writer::start_tag('div', array('class' => 'col-lg-5'));

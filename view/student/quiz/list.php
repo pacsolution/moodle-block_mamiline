@@ -2,17 +2,21 @@
 
 require_once __DIR__ . '/../../../../../config.php';
 require_once(dirname(__FILE__) . '/../../../locallib.php');
+require_once(dirname(__FILE__) . '/../../../classes/common.php');
 require_once(dirname(__FILE__) . '/../../../classes/quiz.php');
 require_once(dirname(__FILE__) . '/../../../classes/grade.php');
 require_once __DIR__ . '/../../../../../lib/gradelib.php';
 require_once __DIR__ . '/../../../../../mod/quiz/lib.php';
 require_once __DIR__ . '/../../../../../mod/quiz/locallib.php';
 
+use mamiline\common;
+use mamiline\quiz;
+use mamiline\grade;
+
 require_login();
 
 $basedir = $CFG->wwwroot . '/blocks/mamiline';
-$quizid = optional_param('quizid', 0, PARAM_INT);
-$courseid = optional_param('courseid', 0, PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 
 /* @var $DB moodle_database */
 /* @var $USER object */
@@ -21,7 +25,7 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 /* @var $PAGE object */
 global $DB, $USER, $OUTPUT, $CFG, $PAGE;
 
-$context = context::instance_by_id(1);
+$context = context_course::instance($courseid);
 $PAGE->set_context($context);
 
 echo html_writer::start_tag('html', array('lang' => 'ja'));
@@ -111,7 +115,8 @@ echo html_writer::tag('th', get_string('quiz_show_diff', 'block_mamiline'));
 echo html_writer::end_tag('thread');
 echo html_writer::end_tag('tr');
 
-$quiz_attempts = mamiline\quiz::finished_attenpts($USER->id, $courseid);
+$quiz_attempts = quiz::finished_attenpts($USER->id, $courseid);
+$unfinished = quiz::unfinish($USER->id, $courseid);
 
 foreach ($quiz_attempts as $quiz) {
     $cm = get_coursemodule_from_instance('quiz', $quiz->qid);
@@ -129,7 +134,7 @@ foreach ($quiz_attempts as $quiz) {
         $timefinish = userdate($quiz->timefinish);
     }
 
-    $course = mamiline\get_course($quiz->course);
+    $course = common::course($quiz->course);
     switch ($quiz->state) {
         case 'finished' :
             $finished++;
@@ -163,10 +168,11 @@ foreach ($quiz_attempts as $quiz) {
     echo html_writer::end_tag('tr');
 }
 
-$data =  "{label : '" . get_string('quiz_state_finished', 'block_mamiline') . "', value : $finished},";
-$data .= "{label : '" . get_string('quiz_state_inprogress', 'block_mamiline') . "', value : $inprogress},";
-$data .= "{label : '" . get_string('quiz_state_overdue', 'block_mamiline') . "', value : $overdue},";
-$data .= "{label : '" . get_string('quiz_state_abandoned', 'block_mamiline') . "', value : $abandoned}";
+$data =  "{label : '" . get_string('finished', 'block_mamiline') . "', value : $finished},";
+$data .= "{label : '" . get_string('inprogress', 'block_mamiline') . "', value : $inprogress},";
+$data .= "{label : '" . get_string('overdue', 'block_mamiline') . "', value : $overdue},";
+$data .= "{label : '" . get_string('abandoned', 'block_mamiline') . "', value : $abandoned},";
+$data .= "{label : '" . get_string('unfinished', 'block_mamiline') . "', value : $unfinished}";
 
 $sum = $finished + $inprogress + $overdue + $abandoned;
 echo html_writer::end_tag('table');
