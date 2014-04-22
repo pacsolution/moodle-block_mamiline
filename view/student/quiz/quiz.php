@@ -123,7 +123,6 @@ echo html_writer::end_tag('div');
 $average = round(quiz::average($quiz),1);
 echo html_writer::tag('div', get_string('quiz_average','block_mamiline') . ' : ' . html_writer::tag('h1', round($average, 1)));
 echo html_writer::tag('div', get_string('quiz_feedback','block_mamiline') . ' : '  . html_writer::tag('div', $feedback));
-//    echo html_writer::tag('div', html_writer::empty_tag('img', array('src' => $basedir . '/images/verygood.gif','align' => 'center' ,'class' => 'img-rounded', 'width' => '140', 'height' => '140')));
 echo html_writer::end_tag('div');
 
 echo html_writer::start_tag('div', array('class' => 'col-md-5 col-md-offset-1'));

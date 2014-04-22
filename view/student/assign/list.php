@@ -92,7 +92,7 @@ echo html_writer::start_tag('div', array('class' => 'row'));
 echo html_writer::start_tag('div', array('class' => 'row'));
 echo html_writer::start_tag('div', array('class' => 'col-md-9'));
 
-$submissions = \mamiline\assign::submissions($USER->id);
+$submissions = mamiline\assign::submissions($USER->id, $courseid);
 
 echo html_writer::start_tag('table' , array('class' => 'table table-striped'));
 echo html_writer::start_tag('thread');

@@ -8,6 +8,7 @@ require_once(dirname(__FILE__) . '/locallib.php');
 require_once __DIR__ . '/classes/common.php';
 require_once __DIR__ . '/classes/grade.php';
 require_once __DIR__ . '/classes/quiz.php';
+require_once __DIR__ . '/classes/role.php';
 
 require_login();
 
@@ -19,6 +20,7 @@ require_login();
 global $DB, $USER, $OUTPUT, $CFG, $PAGE;
 
 $context = context::instance_by_id(1);
+$courses = enrol_get_all_users_courses($USER->id);
 $PAGE->set_context($context);
 
 echo html_writer::start_tag('html', array('lang' => 'ja'));
@@ -53,7 +55,8 @@ echo html_writer::start_tag('article', array('class' => 'col-sm-12 col-md-12 col
 echo html_writer::start_tag('div', array('class' => 'profile'));
 echo html_writer::tag('div', $OUTPUT->user_picture($USER, array('size'=>140, 'class' => 'img-circle')), array('id' => 'userinfo'));
 echo html_writer::tag('p', fullname($USER));
-if(has_capability('block/mamiline:viewteacher', $context)){ //ロール(学生/教員)を表示
+if(\mamiline\role::is_moderator_courses($USER, $courses))
+{
     echo html_writer::tag('p', get_string('roleasteacher', 'block_mamiline'));
 }else{
     echo html_writer::tag('p', get_string('roleasstudent', 'block_mamiline'));
@@ -105,57 +108,36 @@ echo html_writer::tag('th', get_string('course_startdate','block_mamiline'));
 echo html_writer::tag('th', get_string('course_grade', 'block_mamiline'));
 echo html_writer::end_tag('thread');
 echo html_writer::end_tag('tr');
-$courses = enrol_get_all_users_courses($USER->id);
 $i = 0;
-$page = 1;
 foreach($courses as $course){
-    if($course->id != SITEID && $i != 10){
+    if($i > 30){
+        break;
+    }
+    if($course->id != SITEID){
         echo html_writer::start_tag('tr');
         echo html_writer::tag('td', html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $course->fullname), array('class' => 'subscribelink'));
         echo html_writer::tag('td', userdate($course->startdate));
         echo html_writer::tag('td', \mamiline\grade::coursegrade($USER->id, $course->id)->str_long_grade);
         echo html_writer::end_tag('tr');
         $i++;
-    }else{
-        $i = 0;
-        $page++;
     }
 }
-
-$js_course_pager = "
-$(function(){
-    $('#paging').pagination({
-        items: 8,
-        displayedPages: 1,
-        cssStyle: 'light-theme',
-        prevText: '前',
-        nextText: '次',
-        onPageClick: function(pageNumber){show(pageNumber)}
-    })
-});
-function show(pageNumber){
-    var page='#page-' + pageNumber;
-    $('.selection').hide()
-    $(page).show()
-}
-";
-
 echo html_writer::end_tag('table');
-//echo html_writer::start_div('pager', array('id' => 'paging'));
-//echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');
+echo html_writer::tag('a', get_string('view_all_courses', 'block_mamiline'),
+    array('class' => 'btn btn-success', 'href' => new moodle_url('/blocks/mamiline/view/student/courses/')));
 echo html_writer::end_tag('div');
 
 //「ログイングラフ」
-echo html_writer::start_tag('div', array('class' => 'col-lg-5'));
-echo html_writer::start_tag('div', array('class' => 'panel panel-default'));
-echo html_writer::start_tag('div', array('class' => 'panel-heading'));
+echo html_writer::start_div('col-lg-5');
+echo html_writer::start_div('panel panel-default');
+echo html_writer::start_div('panel-heading');
 echo html_writer::tag('h4', get_string('login_graph','block_mamiline'));
-echo html_writer::start_tag('div', array('id' => 'line-login'));
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
-echo html_writer::end_tag('div');
+echo html_writer::end_div();
+echo html_writer::start_div('', array('id' => 'line-login'));
+echo html_writer::end_div();
+echo html_writer::end_div();
+echo html_writer::end_div();
 $logins = \mamiline\common::logins($USER->id);
 $date = array(
     date("m/d",strtotime("-6 day")),
@@ -170,29 +152,31 @@ $js_graph_login = "
 Morris.Line({
   element: 'line-login',
   data: [
-    { y: '$date[0]', a: $logins[0]},
-    { y: '$date[1]', a: $logins[1]},
-    { y: '$date[2]', a: $logins[2]},
-    { y: '$date[3]', a: $logins[3]},
-    { y: '$date[4]', a: $logins[4]},
-    { y: '$date[5]', a: $logins[5]},
-    { y: '$date[6]', a: $logins[6]}
+    { date:'$date[0]', a:$logins[0]},
+    { date:'$date[1]', a:$logins[1]},
+    { date:'$date[2]', a:$logins[2]},
+    { date:'$date[3]', a:$logins[3]},
+    { date:'$date[4]', a:$logins[4]},
+    { date:'$date[5]', a:$logins[5]},
+    { date:'$date[6]', a:$logins[6]}
   ],
-  xkey: 'y',
-  ykeys: ['a'],
-  labels: ['ログイン数'],
-  xLabels : 'month',
+  xkey : 'date',
+  ykeys : ['a'],
+  smooth : false,
+  onlyIntegers : true,
+  labels: ['" . get_string('num_login', 'block_mamiline') . "'],
   parseTime: false
 });
 ";
 
 //「最近完了した小テスト」
-echo html_writer::start_tag('div', array('class' => 'col-lg-5'));
-echo html_writer::start_tag('div', array('class' => 'panel panel-default'));
-echo html_writer::start_tag('div', array('class' => 'panel-heading'));
+echo html_writer::start_div('col-lg-5');
+echo html_writer::start_div('panel panel-default');
+echo html_writer::start_div('panel-heading');
 echo html_writer::tag('h4', get_string('recent_quiz_finished','block_mamiline'));
+echo html_writer::end_div();
 $recents = mamiline\quiz::recent_finished($USER->id);
-echo html_writer::start_tag('table', array('class' => 'table table-striped'));
+echo html_writer::start_tag('table', array('class' => 'table'));
 echo html_writer::start_tag('tr');
 echo html_writer::start_tag('thread');
 echo html_writer::tag('th', get_string('quiz','block_mamiline'));
@@ -244,6 +228,5 @@ echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/raphael-min.j
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/morris-0.4.3.min.js'));
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/jquery.simplePagination.js'));
 echo html_writer::script($js_graph_login);
-echo html_writer::script($js_course_pager);
 echo html_writer::end_tag('body');
 echo html_writer::end_tag('html');

@@ -21,6 +21,7 @@ $string['student'] = '学生';
 $string['top'] = 'トップ';
 $string['graph'] = 'グラフ';
 $string['dashboard'] = 'ダッシュボード';
+$string['num_login'] = 'ログイン回数';
 
 $string['quiz_finished'] = '完了した小テスト';
 $string['recent_quiz_finished'] = '最近完了した小テスト';
@@ -31,12 +32,15 @@ $string['roleasstudent'] = '学生ユーザー';
 
 $string['mamiline'] = '可視化';
 
+$string['course_list'] = 'コース一覧';
+
 $string['course_yourcourses'] = '現在所属しているコース';
 $string['course_list'] = 'コース一覧';
 $string['course_fullname'] = 'コース名';
 $string['course_startdate'] = '開講日';
 $string['course_summary'] = 'コース概要';
 $string['course_grade'] = 'コース評点';
+$string['view_all_courses'] = '全コース一覧を表示';
 
 $string['login_graph'] = 'ログイングラフ(過去7日分)';
 
@@ -129,6 +133,7 @@ $string['timeline_my'] = '自分のタイムライン';
 $string['timeline_my_desc'] = '自分の活動ログのみを表示します。';
 $string['timeline_view'] = 'このコースのタイムラインを表示';
 $string['timeline_course'] = 'コースタイムライン';
+$string['timeline_course_list'] = 'コースタイムライン';
 $string['timeline_course_desc'] = 'コースタイムラインを表示します。';
 $string['timeline_choose_course'] = 'コースを切り替え';
 $string['timeline_choose_mode'] = '表示モードを選択してください';
@@ -154,9 +159,9 @@ $string['timeline_view_submit_assignment_form'] = '表示';
 $string['timeline_view_summary'] = '表示';
 $string['timeline_select_mode'] = '表示切り替え';
 $string['timeline_add_discussion'] = 'フォーラムに投稿';
-$string['timeline_view_discussion'] = 'フォーラムを閲覧';
 $string['timeline_add_submission'] = '提出物を追加';
 $string['timeline_view_submission'] = '提出物を閲覧';
+
 $string['timeline_to'] = 'に';
 
 $string['assign'] = '提出物';

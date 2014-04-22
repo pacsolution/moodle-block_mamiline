@@ -66,7 +66,9 @@ class block_mamiline extends block_base {
         return true;
     }
 
-    function has_config() {return false;}
+    function has_config() {
+        return false;
+    }
 
     public function cron() {
         return true;

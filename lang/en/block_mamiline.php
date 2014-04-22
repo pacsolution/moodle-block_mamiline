@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Strings for component 'block_mamiline', language 'ja'
+ * Strings for component 'block_mamiline', language 'en'
  *
  * @package   block_mamiline
  * @copyright VERSION2 Inc. <t-fuwa@ver2.jp>
@@ -21,6 +21,7 @@ $string['student'] = '学生';
 $string['top'] = 'トップ';
 $string['graph'] = 'グラフ';
 $string['dashboard'] = 'ダッシュボード';
+$string['num_login'] = 'ログイン回数';
 
 $string['quiz_finished'] = '完了した小テスト';
 $string['recent_quiz_finished'] = '最近完了した小テスト';
@@ -31,12 +32,15 @@ $string['roleasstudent'] = '学生ユーザー';
 
 $string['mamiline'] = '可視化';
 
+$string['course_list'] = 'コース一覧';
+
 $string['course_yourcourses'] = '現在所属しているコース';
 $string['course_list'] = 'コース一覧';
 $string['course_fullname'] = 'コース名';
 $string['course_startdate'] = '開講日';
 $string['course_summary'] = 'コース概要';
 $string['course_grade'] = 'コース評点';
+$string['view_all_courses'] = '全コース一覧を表示';
 
 $string['login_graph'] = 'ログイングラフ(過去7日分)';
 

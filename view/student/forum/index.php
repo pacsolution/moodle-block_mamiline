@@ -60,19 +60,19 @@ if (has_capability('block/mamiline:viewteacher', $context)) { //ロール(学生
 echo html_writer::end_tag('div');
 echo html_writer::start_tag('ul', array('class' => 'list-group', 'id' => 'side-menu'));
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/index.php', get_string('top', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/', get_string('top', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/timeline.php', get_string('timeline', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/timeline/', get_string('timeline', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/quiz.php', get_string('quiz', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/quiz/', get_string('quiz', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/assign.php', get_string('assign', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/assign/', get_string('assign', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',

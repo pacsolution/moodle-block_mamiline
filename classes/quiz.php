@@ -2,7 +2,8 @@
 
 namespace mamiline;
 
-class quiz {
+class quiz
+{
     public static function quiz($quizid)
     {
         global $DB;
@@ -52,12 +53,11 @@ class quiz {
 
         $result = $DB->get_records_sql($sql, array('userid' => $userid));
 
-
         return $result;
 
     }
 
-    public static function num_finished($userid)
+    public static function count_finished($userid)
     {
         global $DB;
         $attempts = $DB->count_records('quiz_attempts', array('userid' => $userid, 'state' => 'finished'), 'id', 'id, quiz, userid, attempt');
@@ -136,35 +136,35 @@ class quiz {
                                                WHERE t_msg.itemid = gi.id AND t_msg.userid = t.id))
              HAVING timealert <= :now
            ORDER BY gi.sortorder ASC, u.institution ASC, u.idnumber ASC",
-            [ 'defaultdaysleaving' => $defaultdaysleaving,
-              'contextlevel' => CONTEXT_COURSE, 'archetype' => 'student',
-              'systemlevel' => CONTEXT_SYSTEM,
-              'courselevel' => CONTEXT_COURSE,
-              'modulelevel' => CONTEXT_MODULE,
-              'receivercap' => 'block/alert:receivemail',
-              'now' => time() ]);
+            ['defaultdaysleaving' => $defaultdaysleaving,
+                'contextlevel' => CONTEXT_COURSE, 'archetype' => 'student',
+                'systemlevel' => CONTEXT_SYSTEM,
+                'courselevel' => CONTEXT_COURSE,
+                'modulelevel' => CONTEXT_MODULE,
+                'receivercap' => 'block/alert:receivemail',
+                'now' => time()]);
         $items = [];
         foreach ($rs as $r) {
             if (!isset($items[$r->id])) {
                 $items[$r->id] = (object)[
-                    'id'         => $r->id,
-                    'courseid'   => $r->courseid,
+                    'id' => $r->id,
+                    'courseid' => $r->courseid,
                     'coursename' => $r->coursename,
-                    'itemname'   => $r->itemname,
-                    'cmid'       => $r->cmid,
+                    'itemname' => $r->itemname,
+                    'cmid' => $r->cmid,
                     //'duedate'    => $r->duedate,
-                    'timealert'  => $r->timealert,
+                    'timealert' => $r->timealert,
                     //'gradepass'  => $r->gradepass,
-                    'students'   => [],
+                    'students' => [],
                 ];
             }
             $items[$r->id]->students[$r->userid] = (object)[
-                'id'          => $r->userid,
+                'id' => $r->userid,
                 'institution' => $r->institution,
-                'idnumber'    => $r->idnumber,
-                'firstname'   => $r->firstname,
-                'lastname'    => $r->lastname,
-                'email'       => $r->email,
+                'idnumber' => $r->idnumber,
+                'firstname' => $r->firstname,
+                'lastname' => $r->lastname,
+                'email' => $r->email,
                 //'mailformat'  => $r->mailformat,
                 //'lang'        => $r->lang,
                 //'timezone'    => $r->timezone,
@@ -172,6 +172,7 @@ class quiz {
             ];
         }
         $rs->close();
+
         return $items;
     }
 
@@ -204,12 +205,13 @@ class quiz {
     {
         global $DB;
 
-        $average = $DB->get_field('quiz_grades', 'AVG(grade)',  array('quiz' => $quiz->id));
+        $average = $DB->get_field('quiz_grades', 'AVG(grade)', array('quiz' => $quiz->id));
 
         return $average;
     }
 
-    public static function get_uploaded_file($questionattemptid) {
+    public static function get_uploaded_file($questionattemptid)
+    {
         global $DB;
 
         $steps = $DB->get_records('question_attempt_steps',
@@ -231,10 +233,12 @@ class quiz {
 
         foreach ($steps as $step) {
             if ($files = $fs->get_area_files($contextid, 'question', 'response_answer', $step->id,
-                'itemid, filepath, filename', false)) {
+                'itemid, filepath, filename', false)
+            ) {
                 return reset($files);
             }
         }
+
         return null;
     }
 }

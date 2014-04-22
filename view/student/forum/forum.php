@@ -68,15 +68,15 @@ echo html_writer::tag('li',
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/timeline.php', get_string('timeline', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/timeline/', get_string('timeline', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/quiz.php', get_string('quiz', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/quiz/', get_string('quiz', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/assign.php', get_string('assign', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/assign/', get_string('assign', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',

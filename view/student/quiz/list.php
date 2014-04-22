@@ -10,9 +10,6 @@ require_once __DIR__ . '/../../../../../mod/quiz/locallib.php';
 
 require_login();
 
-use mamiline\quiz;
-use mamiline\grade;
-
 $basedir = $CFG->wwwroot . '/blocks/mamiline';
 $quizid = optional_param('quizid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -71,15 +68,15 @@ echo html_writer::tag('li',
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/timeline.php', get_string('timeline', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/timeline/', get_string('timeline', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/quiz.php', get_string('quiz', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/quiz/', get_string('quiz', 'block_mamiline')),
     array('class' => 'list-group-item active')
 );
 echo html_writer::tag('li',
-    html_writer::link('/blocks/mamiline/view/student/assign.php', get_string('assign', 'block_mamiline')),
+    html_writer::link('/blocks/mamiline/view/student/assign', get_string('assign', 'block_mamiline')),
     array('class' => 'list-group-item')
 );
 echo html_writer::tag('li',
@@ -166,50 +163,36 @@ foreach ($quiz_attempts as $quiz) {
     echo html_writer::end_tag('tr');
 }
 
+$data =  "{label : '" . get_string('quiz_state_finished', 'block_mamiline') . "', value : $finished},";
+$data .= "{label : '" . get_string('quiz_state_inprogress', 'block_mamiline') . "', value : $inprogress},";
+$data .= "{label : '" . get_string('quiz_state_overdue', 'block_mamiline') . "', value : $overdue},";
+$data .= "{label : '" . get_string('quiz_state_abandoned', 'block_mamiline') . "', value : $abandoned}";
+
 $sum = $finished + $inprogress + $overdue + $abandoned;
 echo html_writer::end_tag('table');
 echo html_writer::end_tag('div');
 
 //グラフ
-echo html_writer::start_tag('div', array('class' => 'col-md-9'));
-echo html_writer::tag('h3', get_string('graph', 'block_mamiline'));
-echo html_writer::empty_tag('canvas', array('id' => 'quiz_status'));
+echo html_writer::start_tag('div', array('class' => 'col-md-4'));
+echo html_writer::tag('h3', get_string('quiz_graph_status', 'block_mamiline'));
+echo html_writer::start_div('', array('id' => 'donut-quizstatus'));
+echo html_writer::end_div();
 echo html_writer::end_tag('div');
-$jscode = '
-          var chartdata53 = {
-            "config": {
-                "title": "' . get_string('quiz_graph_status', 'block_mamiline') . '",
-                "subTitle": "",
-                "type": "pie",
-                "useVal": "yes",
-                "pieDataIndex": 2,
-                "colNameFont": "100 18px",
-                "pieRingWidth": 80,
-                "pieHoleRadius": 40,
-                "bg": "#fff",
-                "xColor": "rgba(150,150,150,0.6)",
-                "colorSet":
-                    ["rgba(0,150,250,0.5)","rgba(200,0,250,0.4)","rgba(250,250,0,0.3)"],
-                    "textColor": "#444",
-                },
-            "data": [
-                ["小テスト数", ' . $sum . '],
-                ["' . get_string('quiz_state_finished', 'block_mamiline') . '", ' . $finished . '  ],
-                ["' . get_string('quiz_state_abandoned', 'block_mamiline') . '", ' . $abandoned . ' ],
-                ["' . get_string('quiz_state_inprogress', 'block_mamiline') . '", ' . $inprogress . '],
-                ["' . get_string('quiz_state_overdue', 'block_mamiline') . '", ' . $overdue . '   ]
-            ]
-        };
-        ccchart.init("quiz_status", chartdata53);
-';
-echo html_writer::script($jscode);
+$js = "
+Morris.Donut({
+  element: 'donut-quizstatus',
+  data: [
+    $data
+  ]
+});
+";
 echo html_writer::end_tag('div');
 
 //Script
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/jquery.min.js'));
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/raphael-min.js'));
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/morris-0.4.3.min.js'));
-echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/ccchart.js'));
+echo html_writer::script($js);
 
 echo html_writer::end_tag('body');
 echo html_writer::end_tag('html');
