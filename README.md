@@ -1,12 +1,14 @@
 #mamiline
 
+開発者の所属組織が変わったため、forkしました。
+
 "mamiline(マミライン)"は、Moodle上のデータのみでポートフォリオを作成するMoodleプラグインです。
 
 詳細情報は下記ページに記載しています。
 http://version2-inc.github.io/moodle-block_mamiline
 
 ##免責事項
-このプラグインをインストールすることによって、万が一お使いのMoodleが破損するなどした場合でも、開発元である株式会社VERSION2は一切責任を負わないものとします。
+このプラグインをインストールすることによって、万が一お使いのMoodleが破損するなどした場合でも、開発元である開発者は一切責任を負わないものとします。
 
 ##License
 Copyright VERSION2 Inc.
