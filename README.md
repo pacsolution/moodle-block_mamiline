@@ -1,5 +1,10 @@
 #mamiline
 
+#重要(important)
+
+マミラインの開発は別リポジトリにforkして開発しています。このリポジトリは更新されません。
+Mamiline on this repository is no longer supported. Mamiline is moved to https://github.com/VERSION2-Inc/moodle-block_mamiline
+
 "mamiline(マミライン)"は、Moodle上のデータのみでポートフォリオを作成するMoodleプラグインです。
 
 詳細情報は下記ページに記載しています。
