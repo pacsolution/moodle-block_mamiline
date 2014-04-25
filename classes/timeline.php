@@ -59,7 +59,7 @@ class timeline {
         switch($s_action){
             case 'view' :
                 $action =  get_string('timeline_' . $s_action, 'block_mamiline');
-                $title = $module->name . 'を' . $action;
+                $title = \html_writer::tag('a', $module->name, array('href' => new \moodle_url('/' . $log->module . '/' . $log->url))) . 'を' . $action;
                 $message = $user_url . 'が' . userdate($log->time) . "に" . $module->name . 'へアクセスしました。';
                 break;
             case 'view_summary' :
@@ -85,7 +85,7 @@ class timeline {
             case 'review' :
                 $action =  get_string('timeline_' . $s_action, 'block_mamiline');
                 $title = $module->name . 'が' . $action . '完了';
-                $message =  \html_writer::empty_tag('img', array('src' => new moodle_url('/blocks/mamiline/images/hanamaru.png'), 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . "に" . $action . 'されました';
+                $message =  \html_writer::empty_tag('img', array('src' => new \moodle_url('/blocks/mamiline/images/hanamaru.png'), 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . "に" . $action . 'されました';
                 break;
             case 'update' :
                 $action =  get_string('timeline_' . $s_action, 'block_mamiline');
@@ -105,12 +105,12 @@ class timeline {
             case 'login' :
                 $action =  get_string('timeline_' . $s_action, 'block_mamiline');
                 $title = $action;
-                $message = \html_writer::empty_tag('img', array('src' => new moodle_url('/blocks/mamiline/images/login.png'), 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . $action . 'しました';
+                $message = \html_writer::empty_tag('img', array('src' => new \moodle_url('/blocks/mamiline/images/login.png'), 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . $action . 'しました';
                 break;
             case 'logout' :
                 $action =  get_string('timeline_' . $s_action, 'block_mamiline');
                 $title = $action;
-                $message = \html_writer::empty_tag('img', array('src' => new moodle_url('/blocks/mamiline/images/logout.png'), 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . $action . 'しました';
+                $message = \html_writer::empty_tag('img', array('src' => new \moodle_url('/blocks/mamiline/images/logout.png'), 'height' => '60px', 'width' => '60px')) . $user_url . 'が' . userdate($log->time) . $action . 'しました';
                 break;
             case 'add' :
                 $action =  get_string('timeline_' . $s_action, 'block_mamiline');

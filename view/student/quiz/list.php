@@ -178,27 +178,70 @@ $sum = $finished + $inprogress + $overdue + $abandoned;
 echo html_writer::end_tag('table');
 echo html_writer::end_tag('div');
 
-//グラフ
-echo html_writer::start_tag('div', array('class' => 'col-md-4'));
-echo html_writer::tag('h3', get_string('quiz_graph_status', 'block_mamiline'));
-echo html_writer::start_div('', array('id' => 'donut-quizstatus'));
-echo html_writer::end_div();
+echo html_writer::start_tag('div', array('class' => 'col-md-9'));
+echo html_writer::tag('h3', get_string('quiz_unattempt', 'block_mamiline'));
+echo html_writer::start_tag('table', array('class' => 'table table-striped table-hover'));
+echo html_writer::start_tag('tr');
+echo html_writer::tag('th', get_string('quiz_coursename', 'block_mamiline'));
+echo html_writer::tag('th', get_string('quiz_name', 'block_mamiline'));
+echo html_writer::tag('th', get_string('quiz_timestart', 'block_mamiline'));
+echo html_writer::tag('th', get_string('quiz_timefinish', 'block_mamiline'));
+echo html_writer::tag('th', get_string('quiz_state', 'block_mamiline'));
+echo html_writer::tag('th', get_string('quiz_score_max', 'block_mamiline'));
+echo html_writer::tag('th', get_string('quiz_show_diff', 'block_mamiline'));
+echo html_writer::end_tag('thread');
+echo html_writer::end_tag('tr');
+
+$quiz_attempts = quiz::finished_unattenpts($USER->id, $courseid);
+$unfinished = quiz::unfinish($USER->id, $courseid);
+
+foreach ($quiz_attempts as $quiz) {
+    echo html_writer::start_tag('tr');
+    echo html_writer::tag('td', html_writer::link(new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $course->id)), s($course->fullname)));
+    echo html_writer::tag('td', html_writer::link(new moodle_url($CFG->wwwroot . '/mod/quiz/view.php', array('id' => $quiz->id)), s($quiz->name)));
+    echo html_writer::tag('td', userdate($quiz->timestart));
+    echo html_writer::tag('td', $timefinish);
+    echo html_writer::tag('td', $str_state);
+    echo html_writer::tag('td', round($gd->grade, 1) . "/" . round($g->grademax, 1));
+    echo html_writer::tag('td', html_writer::link(new moodle_url($CFG->wwwroot . '/blocks/mamiline/view/student/quiz/quiz.php',
+                array('quizid' => $quiz->qid)),
+            get_string('quiz_show_diff', 'block_mamiline'), array('class' => 'btn btn-success')
+        )
+    );
+    echo html_writer::end_tag('tr');
+}
+echo html_writer::end_tag('table');
 echo html_writer::end_tag('div');
-$js = "
+
+
+//「受験状況グラフ」
+$sum = quiz::count_quizzes($courseid);
+$data =  "{label : '" . get_string('finished', 'block_mamiline') . "', value : " . round(($finished / $sum) * 100, 2) . "},";
+$data .= "{label : '" . get_string('unfinished', 'block_mamiline') . "', value : " . round(($unfinished / $sum) * 100, 2) . "},";
+$data .= "{label : '" . get_string('inprogress', 'block_mamiline') . "', value : " . round(($inprogress / $sum) * 100, 2) . "},";
+$data .= "{label : '" . get_string('overdue', 'block_mamiline') . "', value : " . round(($overdue / $sum) * 100, 2) . "},";
+$data .= "{label : '" . get_string('abandoned', 'block_mamiline') . "', value : " . round(($abandoned / $sum) * 100, 2) . "},";
+
+echo html_writer::start_div('col-md-4');
+echo html_writer::tag('h3', get_string('quiz_graph_status', 'block_mamiline'));
+echo html_writer::start_div('', array('id' => 'donut-quiz-finished'));
+echo html_writer::end_div();
+$js_quiz_status = "
 Morris.Donut({
-  element: 'donut-quizstatus',
+  element: 'donut-quiz-finished',
   data: [
     $data
-  ]
+  ],
+  formatter: function (x) { return x + '%'}
 });
 ";
-echo html_writer::end_tag('div');
+echo html_writer::end_div();
 
 //Script
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/jquery.min.js'));
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/raphael-min.js'));
 echo html_writer::script(null, new moodle_url('/blocks/mamiline/js/morris-0.4.3.min.js'));
-echo html_writer::script($js);
+echo html_writer::script($js_quiz_status);
 
 echo html_writer::end_tag('body');
 echo html_writer::end_tag('html');

@@ -99,6 +99,33 @@ class quiz
         return $result;
     }
 
+    public static function finished_unattenpts($userid, $courseid)
+    {
+        global $DB;
+        $sql = "SELECT DISTINCT qa.id,
+                       q.id as qid,
+                       q.name,
+                       q.course,
+                       qa.timestart,
+                       qa.timefinish,
+                       qa.state,
+                       q.grade,
+                       q.course,
+                       q.sumgrades as q_sumgrades,
+                       qa.sumgrades as qa_sumgrades,
+                       qa.userid
+                FROM {quiz_attempts} as qa
+                JOIN {user} as u ON u.id = qa.userid
+                JOIN {quiz} as q ON qa.quiz = q.id
+                WHERE qa.userid = :userid && qa.preview = 0 && q.course = :courseid && qa.state != 'finished'
+                GROUP BY qid
+                ORDER BY qa.timefinish DESC";
+
+        $result = $DB->get_records_sql($sql, array('userid' => $userid, 'courseid' => $courseid));
+
+        return $result;
+    }
+
     public static function count_finished_attempts($userid, $courseid){
         global $DB;
         $sql = "SELECT COUNT(*)

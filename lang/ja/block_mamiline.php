@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Strings for component 'block_mamiline', language 'ja'
+ * Strings for component 'block_mamiline', language 'en'
  *
  * @package   block_mamiline
  * @copyright VERSION2 Inc. <t-fuwa@ver2.jp>
@@ -30,11 +30,11 @@ $string['status'] = 'ステータス';
 $string['roleasteacher'] = '教員ユーザー';
 $string['roleasstudent'] = '学生ユーザー';
 
-$string['mamiline'] = '可視化';
+$string['mamiline'] = '詳しく分析';
 
 $string['course_list'] = 'コース一覧';
 
-$string['course_yourcourses'] = '現在所属しているコース';
+$string['course_yourcourses'] = '所属しているコース(最新10件)';
 $string['course_list'] = 'コース一覧';
 $string['course_fullname'] = 'コース名';
 $string['course_startdate'] = '開講日';
