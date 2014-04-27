@@ -6,8 +6,8 @@ namespace mamiline;
  *
  * @package    block_mamiline
  * @copyright  2013 VERSION2 Inc.
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * */
 
 defined('MOODLE_INTERNAL') || die();
 

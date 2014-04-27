@@ -107,6 +107,7 @@ $isteacher = 1;
 foreach ($logs as $log) {
     $context = context_course::instance($courseid);
     $roles = get_user_roles($context, $log->userid);
+
     foreach ($roles as $role) {
         if ($role->roleid != 5) {
             $isteacher = 1;
@@ -116,7 +117,7 @@ foreach ($logs as $log) {
             break;
         }
     }
-    if ($isteacher) {
+    if ($isteacher || $roles == null) {
         continue;
     }
     $action = timeline::action($log, $log->userid);

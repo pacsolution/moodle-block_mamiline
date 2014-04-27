@@ -19,8 +19,8 @@
  *
  * @package    block_mamiline
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * */
 
 defined('MOODLE_INTERNAL') || die();
 

@@ -18,9 +18,9 @@
  * mamiline block caps.
  *
  * @package    block_mamiline
- * @copyright  VERSION2 Inc. <t-fuwa@ver2.jp>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ * @copyright  VERSION2 Inc. <yue@eldoom.me>
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * */
 
 defined('MOODLE_INTERNAL') || die();
 

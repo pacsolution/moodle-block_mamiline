@@ -4,24 +4,22 @@
  * Strings for component 'block_mamiline', language 'en'
  *
  * @package   block_mamiline
- * @copyright VERSION2 Inc. <t-fuwa@ver2.jp>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ * @copyright VERSION2 Inc. <yue@eldoom.me>
+ * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * */
 
-$string['mamiline:addinstance'] = 'マミラインを追加';
-$string['pluginname'] = 'マミライン';
-$string['close'] = '閉じる';
-$string['showmamiline'] = 'マミラインを表示';
+$string['mamiline:addinstance'] = 'Add mamiline';
+$string['pluginname'] = 'mamiline';
+$string['close'] = 'close';
+$string['showmamiline'] = 'Open mamiline';
 
-$string['close'] = '閉じる';
-
-$string['userstatus'] = 'ユーザーステータス';
-$string['timeline'] = 'タイムライン';
-$string['student'] = '学生';
-$string['top'] = 'トップ';
-$string['graph'] = 'グラフ';
-$string['dashboard'] = 'ダッシュボード';
-$string['num_login'] = 'ログイン回数';
+$string['userstatus'] = 'user status';
+$string['timeline'] = 'timeline';
+$string['student'] = 'student';
+$string['top'] = 'top';
+$string['graph'] = 'graph';
+$string['dashboard'] = 'dashboard';
+$string['num_login'] = 'Number of login';
 
 $string['quiz_finished'] = '完了した小テスト';
 $string['recent_quiz_finished'] = '最近完了した小テスト';
