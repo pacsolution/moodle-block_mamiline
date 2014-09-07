@@ -45,11 +45,11 @@ class block_mamiline extends block_base {
 
         $html = html_writer::tag('div',
             $OUTPUT->action_link(
-                new moodle_url('/blocks/mamiline/index.php', ['page' => 'top']),
+                new moodle_url('/blocks/mamiline/index.php', array('page' => 'top')),
                 $OUTPUT->pix_icon('i/settings', '') . get_string('showmamiline', 'block_mamiline')
             )
         );
-        return $this->content = (object)[ 'text' => $html ];
+        return $this->content = (object)array('text' => $html);
     }
 
     public function applicable_formats() {

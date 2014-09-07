@@ -137,8 +137,7 @@ foreach ($files as $file) {
 
         if (strstr($file->mimetype, 'image')) {
             $url = moodle_url::make_pluginfile_url($file->contextid, $file->component, $file->filearea, $file->itemid, $file->filepath, $file->filename);
-            $image = new moodle_url('/blocks/mamiline/images/file.png');
-            echo html_writer::tag('td', html_writer::empty_tag('img', array('src' => $image, 'class' => 'img-thumbnail', 'width' => '140', 'height' => '140')));
+            echo html_writer::tag('td', html_writer::empty_tag('img', array('src' => $url, 'class' => 'img-thumbnail', 'width' => '140', 'height' => '140')));
             echo html_writer::end_tag('tr');
             echo html_writer::start_tag('tr');
             echo html_writer::tag('td', html_writer::link($url, get_string('assign_downloadfile', 'block_mamiline'), array('class' => 'btn btn-success')));
@@ -248,6 +247,111 @@ foreach ($files as $file) {
                     keyEnabled: true
                 });
             });";
+        }elseif(strstr($file->mimetype, 'audio/mp3')){
+            $url = moodle_url::make_pluginfile_url($file->contextid, $file->component, $file->filearea, $file->itemid, $file->filepath, $file->filename);
+            echo html_writer::start_tag('td');
+
+            echo html_writer::start_div('jp-jplayer', array('id' => 'jquery_jplayer_1'));
+            echo html_writer::end_div();
+
+            echo html_writer::start_div('jp-video', array('id' => 'jp_container_1'));
+            echo html_writer::start_div('jp-gui jp-interface');
+            echo html_writer::start_div('jp-progress');
+            echo html_writer::start_div('jp-seek-bar');
+            echo html_writer::start_div('jp-play-bar');
+            echo html_writer::end_div();
+            echo html_writer::end_div();
+            echo html_writer::end_div();
+            echo html_writer::start_div('row');
+            echo html_writer::start_div('col-xs-4 jp-current-time');
+            echo html_writer::end_div();
+            echo html_writer::start_div('col-xs-4 text-center');
+            echo html_writer::start_tag('a', array('class' => 'jp-btn jp-repeat', 'tabindex' => '1', 'title' => '繰り返しオン'));
+            echo html_writer::start_span('glyphicon glyphicon-repeat text-muted');
+            echo html_writer::end_span();
+            echo html_writer::end_tag('a');
+            echo html_writer::start_tag('a', array('class' => 'jp-btn jp-repeat-off', 'tabindex' => '1', 'title' => '繰り返しオフ'));
+            echo html_writer::start_span('glyphicon glyphicon-repeat text-muted');
+            echo html_writer::end_span();
+            echo html_writer::end_tag('a');
+            echo html_writer::end_div();
+            echo html_writer::start_tag('ul', array('class' => 'jp-controls'));
+            echo html_writer::start_tag('li');
+            echo html_writer::start_tag('a', array('href' => '#', 'tabindex' => '1', 'class' => 'jp-btn jp-play', 'title' => '再生'));
+            echo html_writer::start_span('glyphicon glyphicon-play');
+            echo html_writer::end_span();
+            echo html_writer::end_tag('a');
+            echo html_writer::end_tag('li');
+
+            echo html_writer::start_tag('li');
+            echo html_writer::start_tag('a', array('href' => '#', 'tabindex' => '1', 'class' => 'jp-btn jp-pause', 'title' => '一時停止'));
+            echo html_writer::start_span('glyphicon glyphicon-pause');
+            echo html_writer::end_span();
+            echo html_writer::end_tag('a');
+            echo html_writer::end_tag('li');
+
+            echo html_writer::start_tag('li');
+            echo html_writer::start_tag('a', array('href' => '#', 'tabindex' => '1', 'class' => 'jp-btn jp-stop', 'title' => '停止'));
+            echo html_writer::start_span('glyphicon glyphicon-stop');
+            echo html_writer::end_span();
+            echo html_writer::end_tag('a');
+            echo html_writer::end_tag('li');
+
+            echo html_writer::start_tag('li');
+            echo html_writer::start_tag('a', array('href' => '#', 'tabindex' => '1', 'class' => 'jp-btn jp-mute', 'title' => 'ミュート'));
+            echo html_writer::start_span('glyphicon glyphicon-volume-off text-muted');
+            echo html_writer::end_span();
+            echo html_writer::end_tag('a');
+            echo html_writer::end_tag('li');
+
+            echo html_writer::start_tag('li');
+            echo html_writer::start_tag('a', array('href' => '#', 'tabindex' => '1', 'class' => 'jp-btn jp-unmute', 'title' => 'ミュート解除'));
+            echo html_writer::start_span('glyphicon glyphicon-volume-off');
+            echo html_writer::end_span();
+            echo html_writer::end_tag('a');
+            echo html_writer::end_tag('li');
+
+            echo html_writer::start_tag('li');
+            echo html_writer::start_div('jp-volume-bar');
+            echo html_writer::start_div('jp-volume-bar-value');
+            echo html_writer::end_div();
+            echo html_writer::end_div();
+            echo html_writer::end_tag('li');
+
+            echo html_writer::start_tag('li');
+            echo html_writer::start_tag('a', array('href' => '#', 'tabindex' => '1', 'class' => 'jp-btn jp-volume-max', 'title' => '最大音量'));
+            echo html_writer::start_span('glyphicon glyphicon-unmute');
+            echo html_writer::end_span();
+            echo html_writer::end_tag('a');
+            echo html_writer::end_tag('li');
+            echo html_writer::end_tag('ul');
+
+            echo html_writer::end_div();
+
+            echo html_writer::start_div('jp-no-solution');
+            echo html_writer::span('Update Required');
+            echo html_writer::div('To play the media you will need to either update your browser to a recent version or update your Flash.');
+            echo html_writer::end_div();
+            echo html_writer::end_div();
+            echo html_writer::end_tag('td');
+            echo html_writer::end_tag('tr');
+            echo html_writer::start_tag('tr');
+            echo html_writer::tag('td', html_writer::link($url, get_string('assign_downloadfile', 'block_mamiline'), array('class' => 'btn btn-success')));
+            echo html_writer::end_tag('tr');
+            $js_jplayer = "
+                $(document).ready(function(){
+                    $('#jquery_jplayer_1').jPlayer({
+                        ready: function () {
+                            $(this).jPlayer('setMedia', {
+                                mp3: '$url',
+                            });
+                        },
+                    swfPath: '../../js/jplayer/Jplayer.swf',
+                    supplied: 'mp3',
+                    wmode: 'window',
+                    keyEnabled: true
+                });
+            });";
         } else {
             $url = moodle_url::make_pluginfile_url($file->contextid, $file->component, $file->filearea, $file->itemid, $file->filepath, $file->filename);
             $image = new moodle_url('/blocks/mamiline/images/file.png');
@@ -262,9 +366,9 @@ foreach ($files as $file) {
 }
 
 //オンラインテキスト
-echo html_writer::start_tag('div', array('class' => 'col-md-9'));
+echo html_writer::start_tag('div', array('class' => 'col-md-12'));
 echo html_writer::tag('h3', get_string('assign_viewonlinetext', 'block_mamiline'));
-echo html_writer::tag('div', $assign_submission->onlinetext);
+echo html_writer::tag('div', $assign_submission->onlinetext, array("class" => "well"));
 echo html_writer::end_tag('div');
 
 //Script

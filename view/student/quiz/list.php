@@ -116,7 +116,11 @@ echo html_writer::end_tag('thread');
 echo html_writer::end_tag('tr');
 
 $quiz_attempts = quiz::finished_attenpts($USER->id, $courseid);
-$unfinished = quiz::unfinish($USER->id, $courseid);
+if($quiz_attempts != null){
+    $unfinished = quiz::unfinish($USER->id, $courseid);
+}else{
+    $unfinished = 0;
+}
 
 foreach ($quiz_attempts as $quiz) {
     $cm = get_coursemodule_from_instance('quiz', $quiz->qid);
@@ -193,7 +197,12 @@ echo html_writer::end_tag('thread');
 echo html_writer::end_tag('tr');
 
 $quiz_attempts = quiz::finished_unattenpts($USER->id, $courseid);
-$unfinished = quiz::unfinish($USER->id, $courseid);
+if($quiz_attempts != null){
+    $unfinished = quiz::unfinish($USER->id, $courseid);
+}else{
+    $unfinished = 0;
+}
+
 
 foreach ($quiz_attempts as $quiz) {
     echo html_writer::start_tag('tr');

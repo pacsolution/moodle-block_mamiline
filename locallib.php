@@ -33,7 +33,7 @@ function mamiline_get_assign_grade($cm, $userid)
            JOIN {grade_items} gi ON gi.itemtype = 'mod' AND gi.itemmodule = 'assign' AND gi.iteminstance = a.assignment
       LEFT JOIN {grade_grades} g ON g.itemid = gi.id AND g.userid = a.userid
           WHERE a.assignment = :assignid AND a.userid = :userid AND a.status = :status",
-        [ 'assignid' => $cm->instance, 'userid' => $userid, 'status' => ASSIGN_SUBMISSION_STATUS_SUBMITTED ]);
+        array('assignid' => $cm->instance, 'userid' => $userid, 'status' => ASSIGN_SUBMISSION_STATUS_SUBMITTED));
 }
 
 /**
@@ -48,7 +48,7 @@ function mamiline_get_quiz_grade($cm, $userid)
 {
     global $DB;
 
-    $quiz = $DB->get_record('quiz', [ 'id' => $cm->instance ]);
+    $quiz = $DB->get_record('quiz', array('id' => $cm->instance));
     $filter = quiz_report_qm_filter_select($quiz, 'qa') ?: 'TRUE';
     return $DB->get_record_sql(
         "SELECT g.id, g.finalgrade, gi.gradepass, gi.grademax,
@@ -87,7 +87,7 @@ function mamiline_get_overdues(array $cmids, $userid)
 
     static $assignmoduleid = null;
     if ($assignmoduleid === null) {
-        $assignmoduleid = $DB->get_field('modules', 'id', [ 'name' => 'assign' ]);
+        $assignmoduleid = $DB->get_field('modules', 'id', array('name' => 'assign'));
     }
     list ($cmin, $cmparams) = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED, 'cmid');
     return $DB->get_records_sql_menu(
@@ -98,7 +98,7 @@ function mamiline_get_overdues(array $cmids, $userid)
       LEFT JOIN {assign_grades} g ON g.assignment = m.id AND g.userid = s.userid
           WHERE cm.module = :moduleid AND cm.id $cmin AND s.status = :submitted
             AND s.timemodified > GREATEST(COALESCE(g.extensionduedate, 0), m.duedate)",
-        [ 'userid' => $userid,
+        array('userid' => $userid,
           'moduleid' => $assignmoduleid,
-          'submitted' => ASSIGN_SUBMISSION_STATUS_SUBMITTED ] + $cmparams);
+          'submitted' => ASSIGN_SUBMISSION_STATUS_SUBMITTED) + $cmparams);
 }

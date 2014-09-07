@@ -113,7 +113,7 @@ foreach($courses as $course){
         echo html_writer::tag('td', html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $course->fullname), array('class' => 'subscribelink'));
         echo html_writer::tag('td', userdate($course->startdate));
         echo html_writer::tag('td', html_writer::link(new moodle_url('/blocks/mamiline/view/student/timeline/timeline_course.php',
-            array('courseid' => $course->id)), get_string('timeline_view', 'block_visualization'), array('class' => 'btn btn-success')),
+            array('courseid' => $course->id)), get_string('timeline_view', 'block_mamiline'), array('class' => 'btn btn-success')),
             array('class' => 'subscribelink'));
         echo html_writer::end_tag('tr');
     }

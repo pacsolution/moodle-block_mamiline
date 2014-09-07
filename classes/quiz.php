@@ -187,7 +187,7 @@ class quiz
         	    JOIN {question_attempts} qa ON qu.id = qa.questionusageid
         		WHERE qa.id = :questionattemptid
         		',
-            ['questionattemptid' => $questionattemptid]
+            array('questionattemptid' => $questionattemptid)
         );
         if (!$contextid) {
             return null;
