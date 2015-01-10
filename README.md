@@ -24,7 +24,7 @@ Maintained by Takayuki Fuwa(yue@eldoom.me)
 
 ##ライセンス(License)
 
-Apache License2.0, GPLv3 Licenseのドュアルライセンスとします。
+Apache License2.0, GPLv3 Licenseのデュアルライセンスとします。
 
 ###Apache License 2.0
 This software includes the work that is distributed in the Apache License 2.0
