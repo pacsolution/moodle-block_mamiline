@@ -22,8 +22,11 @@ http://version2-inc.github.io/moodle-block_mamiline
 Copyright VERSION2 Inc. and Takayuki Fuwa(yue@eldoom.me)
 Maintained by Takayuki Fuwa(yue@eldoom.me)
 
-##ライセンス(Lisence)
+##ライセンス(License)
 
+Apache License2.0, GPLv3 Licenseのドュアルライセンスとします。
+
+###Apache License 2.0
 This software includes the work that is distributed in the Apache License 2.0
 
 Copyright VERSION2 Inc. and Takayuki Fuwa(yue@eldoom.me)
