@@ -19,8 +19,7 @@ http://version2-inc.github.io/moodle-block_mamiline
 
 #著作権
 
-Copyright VERSION2 Inc. and Takayuki Fuwa(yue@eldoom.me)
-Maintained by Takayuki Fuwa(yue@eldoom.me)
+Copyright Takayuki Fuwa(yae.yue@gmail.com)
 
 ##ライセンス(License)
 
